@@ -19,7 +19,7 @@ axonal transport and low signal:noise they have clear advantages in enabling
 quantification.
 
 I covered before a couple of strategies you can use to 
-[import image data into R](http://dozenoaks.ghost.io/importing-images-into-r/). 
+[import image data into R](https://dozenoaks.twelvetreeslab.co.uk/2016/09/importing-images-into-r/). 
 The next step in my workflow is usually to turn that image into a data table for
 further analysis. A data table can take many forms, but I think the easiest and
 most powerful way to get the most out of R these days is to use the tidyverse
