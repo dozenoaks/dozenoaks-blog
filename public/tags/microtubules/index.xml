@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Microtubules on Dozenoaks Blog</title>
+    <link>/tags/microtubules/</link>
+    <description>Recent content in Microtubules on Dozenoaks Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 23 Dec 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/microtubules/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Merry Christmas!</title>
+      <link>/2014/12/merry-christmas/</link>
+      <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/2014/12/merry-christmas/</guid>
+      <description>When I was on the microscope imaging EB3 comets in axons as a control experiment for a control experiment, I got distracted by the comets in the dendrites - so pretty! They reminded me of the icicle lights on the outside of people&amp;rsquo;s houses you see this time of year. So this is my science Christmas card to you - have a Merry one :)</description>
+    </item>
+    
+    <item>
+      <title>Drawing microtubules</title>
+      <link>/2014/01/drawing-microtubules/</link>
+      <pubDate>Tue, 07 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/2014/01/drawing-microtubules/</guid>
+      <description>&lt;p&gt;Sometime ago I got recruited by Jake to help him come up with a summary figure for his paper on &lt;a href=&#34;http://www.plosbiology.org/article/info:doi/10.1371/journal.pbio.1001611&#34;&gt;p150 and microtubule catastrophe&lt;/a&gt;. I place high scientific value on well designed descriptive schematics that help you visualise and explain the process your trying to describe, so I took the task on and decided to use it as an opportunity to build myself a decent microtubule model for later use.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

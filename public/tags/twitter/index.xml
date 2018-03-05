@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Twitter on Dozenoaks Blog</title>
+    <link>/tags/twitter/</link>
+    <description>Recent content in Twitter on Dozenoaks Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 21 Nov 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/twitter/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Sci twitter like a ‘pro&#39;</title>
+      <link>/2017/11/sci-twitter-like-a-pro/</link>
+      <pubDate>Tue, 21 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/11/sci-twitter-like-a-pro/</guid>
+      <description>The science twitter community can be a hugely beneficial resource, it can also be overwhelming if your new to it. I asked the scientists of twitter what platform they were using to interact with twitter itself (‘for a thing’). This post is not the thing I was eluding too, but the poll threw up a few tips I thought it worth drawing attention too and I figured I’d chuck some of my own tips in while I was at it.</description>
+    </item>
+    
+  </channel>
+</rss>

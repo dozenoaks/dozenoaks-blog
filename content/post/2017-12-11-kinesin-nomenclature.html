@@ -1,0 +1,86 @@
+---
+title: Kinesin nomenclature
+thumbnailImagePosition: left
+thumbnailImage: /img/kinesin_families.jpg
+author: Ali Twelvetrees
+date: '2017-12-11'
+slug: kinesin-nomenclature
+categories:
+  - Cell Biology
+tags:
+  - kinesin
+  - dynein
+  - R
+---
+
+
+
+<p>Andreas Prokop raised the issue of kinesin nomenclature on twitter over the weekend “I am tired of having to look up lists!”. I couldn’t agree more, it’s insanely confusing - especially when you’re trying to synthesise literature across several model organisms (shout out to <em>Ustilago maydis</em> and <em>Dictyostelium discoideum</em> here). Why is it confusing? The <a href="http://jcb.rupress.org/content/167/1/19#T1">standardised kinesin nomenclature</a> was defined in 2004, where the superfamily was divided into sub families. They even defined how motors should be referred to in the text.</p>
+<blockquote>
+<ol style="list-style-type: decimal">
+<li>Human Eg5, a member of the Kinesin-5 family (previously referred to as BimC by Dagenbach and Endow, 2004), is involved in establishing the bipolar spindle.</li>
+<li>Human Eg5, a member of the Kinesin-5 family, is involved in establishing the bipolar spindle.</li>
+</ol>
+</blockquote>
+<p>The issue is that this is a mouthful (plus words &amp; characters), so what tends to happen is people stick to the gene/protein name and you have to google to figure out sub-family before you can figure out how it might relate to your own system. So we’re not really talking about nomenclature, just an efficient way of getting from (slightly random) protein/gene name to sub-family information. Preferably without increasing our words counts.</p>
+<p>Andreas proposed superscript to solve the problem, but this definitely has problems too:</p>
+<blockquote class="twitter-tweet" data-partner="tweetdeck">
+<p lang="en" dir="ltr">
+We need better kinesin nomenclature. What about Kin1[KIF5a], Kin6[KIF20a], Kin6[pav] (with square brackets being superscript) - I am tired of having to look up lists! - image: Suppl. Mat. of <a
+href="https://t.co/77GWj7rZgz">https://t.co/77GWj7rZgz</a><a
+href="https://t.co/idk0D8bgQz">https://t.co/idk0D8bgQz</a> <a
+href="https://t.co/MNS2ZsecTD">pic.twitter.com/MNS2ZsecTD</a>
+</p>
+— Andreas Prokop (<span class="citation">@Poppi62</span>) <a
+href="https://twitter.com/Poppi62/status/939789463567335424?ref_src=twsrc%5Etfw">December 10, 2017</a>
+</blockquote>
+<blockquote class="twitter-tweet" data-conversation="none" data-cards="hidden" data-partner="tweetdeck">
+<p lang="en" dir="ltr">
+I don't like superscripts because they're difficult to write with something other than Word, hard to read, lost when copy/pasting. What's wrong with the slash KIF5/kinesin-1?
+</p>
+— Christophe🔬Leterrier (<span class="citation">@christlet</span>) <a href="https://twitter.com/christlet/status/939792388096188417?ref_src=twsrc%5Etfw">December 10, 2017</a>
+</blockquote>
+<p>So what’s the solution? I mentioned something I’d adopted when trying to define subpopulations of the dynein motor.</p>
+<blockquote class="twitter-tweet" data-conversation="none" data-cards="hidden" data-partner="tweetdeck">
+<p lang="en" dir="ltr">
+I agree it doesn’t work right now. For my part I use kinesin-1 referring to KIF5 + KLC. I’ve recently stolen from R syntax to describe dynein defined by subunit inclusion as dynein::DIC1 and dynein::DIC2. Could work?
+</p>
+— Ali Twelvetrees (<span class="citation">@dozenoaks</span>) <a href="https://twitter.com/dozenoaks/status/939795055069597696?ref_src=twsrc%5Etfw">December 10, 2017</a>
+</blockquote>
+<p>I think it’s worth thinking about syntax like this, because it’s a structured way of tackling the problem. When I started using <code>::</code> to define dynein::DIC1 and dynein::DIC2 in my own notes it happened naturally without me really thinking about it, then stuck. I took the <code>::</code> operator from R where it disambiguates functions with the same name from different packages. I was thinking about dynein function being defined by certain subunits so dynein::DIC1 felt natural, meaning (in my head) the dynein function defined by incorporation of the DIC1 subunit. Some dynein subunits act outside of dynein in other complexes (packages), so you can imagine <code>dynein::LC8</code> and <code>some_other_complex::LC8</code>.</p>
+<p>I don’t think the kinesin problem is similar to this though. Defining kinesin sub-types is more like calling from a list. There is the kinesin-1 sub-family that has many members with different names across species, and you’re referring to one member. Calling from a list in R is straightforward:</p>
+<pre class="r"><code>#&#39; First I bulid a list
+kinesin_1 &lt;- list(KIF5A = &quot;kinesin-1 isoform KIF5A&quot;, 
+                 KIF5B = &quot;kinesin-1 isoform KIF5B&quot;, 
+                 KIF5C = &quot;kinesin-1 isoform KIF5C&quot;)
+
+ 
+#&#39; Then I can call from the list
+#&#39; First the whole list
+kinesin_1</code></pre>
+<pre><code>## $KIF5A
+## [1] &quot;kinesin-1 isoform KIF5A&quot;
+## 
+## $KIF5B
+## [1] &quot;kinesin-1 isoform KIF5B&quot;
+## 
+## $KIF5C
+## [1] &quot;kinesin-1 isoform KIF5C&quot;</code></pre>
+<pre class="r"><code>#&#39; Now just the bit I&#39;m interested in
+kinesin_1[1]</code></pre>
+<pre><code>## $KIF5A
+## [1] &quot;kinesin-1 isoform KIF5A&quot;</code></pre>
+<p>I don’t think using the <code>$</code> in the middle of a manuscript will catch on. So, maybe as suggested by Andreas, the square brackets are a good compromise? Kinesin_1[KIF5A] being the same as kin1[KIF5A]. The test: the kinesin-1 motor in <em>Ustilago maydis</em> is called kin2, so will we know what <a href="http://www.uniprot.org/uniprot/P87199">kin1[kin2]</a> means relative to <a href="http://www.uniprot.org/uniprot/Q9U921">kin2[kin2]</a>?</p>
+<blockquote class="twitter-tweet" data-partner="tweetdeck">
+<p lang="en" dir="ltr">
+Actually, the Kin1/KIF5a solution feels optional. I would then prefer Kin[KIF5] or Kin1:KIF5 (two colons would indicate a fusion protein, wouldn't they? <a href="https://twitter.com/dozenoaks?ref_src=twsrc%5Etfw"><span class="citation">@dozenoaks</span></a> <a href="https://twitter.com/bengoult?ref_src=twsrc%5Etfw"><span class="citation">@bengoult</span></a> <a href="https://twitter.com/antoine_triller?ref_src=twsrc%5Etfw"><span class="citation">@antoine_triller</span></a> <a href="https://twitter.com/clathrin?ref_src=twsrc%5Etfw"><span class="citation">@clathrin</span></a> <a href="https://t.co/tzpfXUmNDb">https://t.co/tzpfXUmNDb</a>
+</p>
+— Andreas Prokop (<span class="citation">@Poppi62</span>) <a href="https://twitter.com/Poppi62/status/940092612194705409?ref_src=twsrc%5Etfw">December 11, 2017</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(to be continued…?)<br />
+<br /> <br /></p>
+<div class="figure">
+<img src="/img/kinesin_families.jpg" alt="Fig 1. Kinesin nomenclature from Lawrence et al., 2004" />
+<p class="caption">Fig 1. Kinesin nomenclature from Lawrence et al., 2004</p>
+</div>

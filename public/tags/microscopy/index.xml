@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Microscopy on Dozenoaks Blog</title>
+    <link>/tags/microscopy/</link>
+    <description>Recent content in Microscopy on Dozenoaks Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 23 Dec 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/microscopy/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Merry Christmas!</title>
+      <link>/2014/12/merry-christmas/</link>
+      <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/2014/12/merry-christmas/</guid>
+      <description>When I was on the microscope imaging EB3 comets in axons as a control experiment for a control experiment, I got distracted by the comets in the dendrites - so pretty! They reminded me of the icicle lights on the outside of people&amp;rsquo;s houses you see this time of year. So this is my science Christmas card to you - have a Merry one :)</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Dozenoaks Blog</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on Dozenoaks Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Feb 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Turning a kymograph into tidy data using the tidyverse in R</title>
+      <link>/2018/02/turning-a-kymograph-into-tidy-data-using-the-tidyverse-in-r/</link>
+      <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/02/turning-a-kymograph-into-tidy-data-using-the-tidyverse-in-r/</guid>
+      <description>I have a bit of a love hate relationship with kymographs. In the way that they compress data there’s no doubt that you loose information, but in the world of axonal transport and low signal:noise they have clear advantages in enabling quantification.
+I covered before a couple of strategies you can use to import image data into R. The next step in my workflow is usually to turn that image into a data table for further analysis.</description>
+    </item>
+    
+    <item>
+      <title>Kinesin nomenclature</title>
+      <link>/2017/12/kinesin-nomenclature/</link>
+      <pubDate>Mon, 11 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/12/kinesin-nomenclature/</guid>
+      <description>Andreas Prokop raised the issue of kinesin nomenclature on twitter over the weekend “I am tired of having to look up lists!”. I couldn’t agree more, it’s insanely confusing - especially when you’re trying to synthesise literature across several model organisms (shout out to Ustilago maydis and Dictyostelium discoideum here). Why is it confusing? The standardised kinesin nomenclature was defined in 2004, where the superfamily was divided into sub families. They even defined how motors should be referred to in the text.</description>
+    </item>
+    
+    <item>
+      <title>Sci twitter like a ‘pro&#39;</title>
+      <link>/2017/11/sci-twitter-like-a-pro/</link>
+      <pubDate>Tue, 21 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/11/sci-twitter-like-a-pro/</guid>
+      <description>The science twitter community can be a hugely beneficial resource, it can also be overwhelming if your new to it. I asked the scientists of twitter what platform they were using to interact with twitter itself (‘for a thing’). This post is not the thing I was eluding too, but the poll threw up a few tips I thought it worth drawing attention too and I figured I’d chuck some of my own tips in while I was at it.</description>
+    </item>
+    
+    <item>
+      <title>Importing images into R</title>
+      <link>/2016/09/importing-images-into-r/</link>
+      <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/09/importing-images-into-r/</guid>
+      <description>In May my paper was finally released into the wild. Amongst other things it was the culmination of 4 years of me learning to use R for data analysis (and in my case data = images of cells). I’ve been meaning to blog some of this for a while, but I will try for my own sanity to keep everything in bite size chunks. Starting at the start: data import.</description>
+    </item>
+    
+    <item>
+      <title>The pregnant/new mum guide to science conferences</title>
+      <link>/2015/06/the-pregnant-new-mum-guide-to-science-conferences/</link>
+      <pubDate>Fri, 26 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>/2015/06/the-pregnant-new-mum-guide-to-science-conferences/</guid>
+      <description>&lt;p&gt;Pregnancy and new motherhood has brought a whole swathe of new experiences to my conference outings. This is my definitive guide to science conferences for the expecting/new Mum to help you decide where to expend your energy&amp;hellip;.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Merry Christmas!</title>
+      <link>/2014/12/merry-christmas/</link>
+      <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/2014/12/merry-christmas/</guid>
+      <description>When I was on the microscope imaging EB3 comets in axons as a control experiment for a control experiment, I got distracted by the comets in the dendrites - so pretty! They reminded me of the icicle lights on the outside of people&amp;rsquo;s houses you see this time of year. So this is my science Christmas card to you - have a Merry one :)</description>
+    </item>
+    
+    <item>
+      <title>Drawing microtubules</title>
+      <link>/2014/01/drawing-microtubules/</link>
+      <pubDate>Tue, 07 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/2014/01/drawing-microtubules/</guid>
+      <description>&lt;p&gt;Sometime ago I got recruited by Jake to help him come up with a summary figure for his paper on &lt;a href=&#34;http://www.plosbiology.org/article/info:doi/10.1371/journal.pbio.1001611&#34;&gt;p150 and microtubule catastrophe&lt;/a&gt;. I place high scientific value on well designed descriptive schematics that help you visualise and explain the process your trying to describe, so I took the task on and decided to use it as an opportunity to build myself a decent microtubule model for later use.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
