@@ -14,7 +14,7 @@
 
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
-baseURL = "https://affectionate-cray-8265d4.netlify.com/"
+baseURL = "https://dozenoaks.twelvetreeslab.co.uk"
 languageCode = "en-us"
 defaultContentLanguage = "en-us"
 title = "Dozenoaks Blog"
