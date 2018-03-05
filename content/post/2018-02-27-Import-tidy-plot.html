@@ -24,7 +24,7 @@ tags:
 <li>Each type of observational unit forms a table.</li>
 </ol>
 <p>If your a beginner to R it’s worth reading Hadley Whickham’s paper on <a href="https://www.jstatsoft.org/article/view/v059i10">Tidy Data</a>, a very straight forward and useful read.</p>
-<p>This is my strategy to turn an image into tidy data for downstream analysis and then import the image. First up, load the packages we need. The <code>tidyverse</code> package loads a suite of (currently) 26 packages, but in this example I’m only actually using functions from <code>tibble</code>, <code>tidyr</code>, <code>forcats</code> and <code>ggplot2</code>. I’m also loading <code>EBImage</code> to <a href="http://dozenoaks.ghost.io/importing-images-into-r/">import my data</a>:</p>
+<p>This is my strategy to turn an image into tidy data for downstream analysis. First up, load the packages we need. The <code>tidyverse</code> package loads a suite of (currently) 26 packages, but in this example I’m only actually using functions from <code>tibble</code>, <code>tidyr</code>, <code>forcats</code> and <code>ggplot2</code>. I’m also loading <code>EBImage</code> to <a href="http://dozenoaks.ghost.io/importing-images-into-r/">import my data</a>:</p>
 <pre class="r"><code>library(tidyverse)
 library(EBImage)
 
@@ -32,7 +32,7 @@ kymograph &lt;- readImage(&quot;MAX_Reslice_of_low_pass_axon_16bit.tif&quot;, ty
 display(kymograph, method = &quot;raster&quot;)</code></pre>
 <p><img src="/post/2018-02-27-Import-tidy-plot_files/figure-html/load-packages-and-import-1.png" width="672" /></p>
 <p>This image is 950 pixels wide and 181 pixels high.</p>
-<p>Turning the image into a data table is easy enough, in this case we will turn it into a tibble - the tidyverse class for storing a data frame - which is faster than <code>as.data.frame()</code> used in base R.</p>
+<p>Turning the image into a data table is easy enough, in this case I will turn it into a tibble - the tidyverse class for storing a data frame - which is faster than <code>as.data.frame()</code> used in base R.</p>
 <pre class="r"><code>#&#39; Turn the kymograph tif into a tibble
 kymo_data &lt;- as_tibble(kymograph)
 #&#39; Take a quick peek
@@ -120,7 +120,7 @@ is.numeric(kymo_data$Time_point)</code></pre>
 ##  9              9         1.     0.195
 ## 10             10         1.     0.175
 ## # ... with 171,940 more rows</code></pre>
-<p>And it’s done - The kymograph is now tidy data. But why on earth would you want to do such a thing?!? Well, all these steps I’ve just walked through can be automated into one wrapper function. You don’t need to think this hard every time. And once your data is in the table you can start the real work of analysis. You also get to do cool things like this:</p>
+<p>And it’s done - The kymograph is now tidy data. But why on earth would you want to do such a thing?!? Well, all the steps I’ve just walked through can be automated into one wrapper function. You don’t need to think this hard every time. And once your data is in the table you can start the real work of analysis. You also get to do cool things like this:</p>
 <pre class="r"><code>library(ggridges)
 
 plot &lt;- kymo_data %&gt;% ggplot(., aes(x = Pixel_position, y = max(Time_point)-Time_point, group = Time_point, height = Intensity))
@@ -137,9 +137,12 @@ plot +
         panel.spacing = unit(c(0,0,0,0),&quot;cm&quot;)
   )</code></pre>
 <p><img src="/post/2018-02-27-Import-tidy-plot_files/figure-html/ridge-plot-1.png" width="672" /></p>
-<p>The <code>ggridges</code> package was created as a <code>ggplot2</code> extension to allow ridge line plots, specifically plots inspired by the Joy Division <em>Unknown Pleasures</em> album cover (the resulting plots were originally called joy plots). I had been messing around with trying to create a version of this plot for some of my kymograph data, just because I thought it would be visually striking. <code>ggridges</code> is far more elegant than my solution, although the jury is out on whether this is anything other than an aesthetic plot at this point, I do like it.</p>
+<p>The <code>ggridges</code> package was created as a <code>ggplot2</code> extension to allow ridge line plots, specifically plots inspired by the Joy Division <em>Unknown Pleasures</em> album cover (the resulting plots were originally called joy plots). I had been messing around with trying to create a version of this plot for some of my kymograph data, just because I thought it would look cool. <code>ggridges</code> is far more elegant than my solution, although the jury is out on whether this is anything other than an aesthetic plot at this point, I do like it.</p>
 <p>In the process of my research though I did discover that the history of that original plot is quite interesting. I had at some point thought that the <em>Unknown Pleasures</em> stacked plot was actually Dame Jocelyn Bell Burnell’s representation of a pulsar - turns out I was wrong. It was created by Harold Craft, a radio astronomer at the Arecibo Radio Observatory. For fellow data presentation nerds I thoroughly recommend the following two articles; <a href="https://adamcap.com/2011/05/19/history-of-joy-division-unknown-pleasures-album-art/">Adam Cap’s own account</a> of his hunt for the origin of the image and the <a href="https://blogs.scientificamerican.com/sa-visual/pop-culture-pulsar-origin-story-of-joy-division-s-unknown-pleasures-album-cover-video/">Origin story by Jen Christiansen</a> over at Scientific American. Finally, here is an extract from Craft on the stacked plots:</p>
 <blockquote>
 <p>So, the thought was, well, is there something like this peak here, which on the next pulse moves over here, and then moves over here, and over there … So, then the thought was, well let’s plot out a whole array of pulses, and see if we can see particular patterns in there. So that’s why, this one was the first I did – CP1919 – and you can pick out patterns in there if you really work at it. But I think the answer is, there weren’t any that were real obvious anyway.</p>
 </blockquote>
-<p>I think what’s interesting is that they were looking for things moving with these plots, and that is absolutely what a kymograph is for. What’s good enough for pulsars is good enough for axonal transport :)</p>
+<p>I think what’s interesting is that they were looking for things moving with these plots, and that is absolutely what a kymograph is for. What’s good enough for pulsars is good enough for axonal transport :) And if anyone wants to gift me a neon kymograph for the office wall, that would be awesome…</p>
+<div align="center">
+<p><img src="/img/2018-02-27/neon.jpg" alt="Neon light at Burger and Lobster in Manchester (Image: Gary Louth, Manchester Evening News)" /> <a href="https://www.manchestereveningnews.co.uk/whats-on/joy-division-artwork-hacienda-sign-14344682">“Burger and Lobster” in Manchester (Image: Gary Louth, Manchester Evening News)</a></p>
+</div>

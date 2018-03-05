@@ -42,8 +42,7 @@ observation should be on that row.
 If your a beginner to R it's worth reading Hadley Whickham's paper on
 [Tidy Data](https://www.jstatsoft.org/article/view/v059i10), a very straight forward and useful read.
 
-This is my strategy to turn an image into tidy data for downstream analysis and
-then import the image. First up, load the packages we need. The `tidyverse`
+This is my strategy to turn an image into tidy data for downstream analysis. First up, load the packages we need. The `tidyverse`
 package loads a suite of (currently) 26 packages, but in this example I'm only
 actually using functions from `tibble`, `tidyr`, `forcats` and `ggplot2`. I'm also loading
 `EBImage` to [import my data](http://dozenoaks.ghost.io/importing-images-into-r/):
@@ -58,7 +57,7 @@ display(kymograph, method = "raster")
 
 This image is 950 pixels wide and 181 pixels high.
 
-Turning the image into a data table is easy enough, in this case we will turn it
+Turning the image into a data table is easy enough, in this case I will turn it
 into a tibble - the tidyverse class for storing a data frame - which is faster
 than `as.data.frame()` used in base R.
 
@@ -134,7 +133,7 @@ kymo_data
 ```
 
 And it's done - The kymograph is now tidy data. But why on earth would you want
-to do such a thing?!? Well, all these steps I've just walked through can be
+to do such a thing?!? Well, all the steps I've just walked through can be
 automated into one wrapper function. You don't need to think this hard every
 time. And once your data is in the table you can start the real work of
 analysis. You also get to do cool things like this:
@@ -161,7 +160,7 @@ The `ggridges` package was created as a `ggplot2` extension to allow ridge line
 plots, specifically plots inspired by the Joy Division *Unknown Pleasures* album
 cover (the resulting plots were originally called joy plots). I had been messing
 around with trying to create a version of this plot for some of my kymograph
-data, just because I thought it would be visually striking. `ggridges` is far
+data, just because I thought it would look cool. `ggridges` is far
 more elegant than my solution, although the jury is out on whether this is
 anything other than an aesthetic plot at this point, I do like it.
 
@@ -182,8 +181,14 @@ the next pulse moves over here, and then moves over here, and over there ... So,
 then the thought was, well let’s plot out a whole array of pulses, and see if we
 can see particular patterns in there. So that’s why, this one was the first I
 did – CP1919 – and you can pick out patterns in there if you really work at it.
-But I think the answer is, there weren’t any that were real obvious anyway.
+But I think the answer is, there weren’t any that were real obvious anyway.  
 
 I think what's interesting is that they were looking for things moving with
 these plots, and that is absolutely what a kymograph is for. What's good enough for pulsars is good enough for
-axonal transport :)
+axonal transport :) And if anyone wants to gift me a neon kymograph for the office wall, that would be awesome...  
+
+<div align = center>
+
+![Neon light at "Burger and Lobster" in Manchester (Image: Gary Louth, Manchester Evening News)](/img/2018-02-27/neon.jpg) 
+["Burger and Lobster" in Manchester (Image: Gary Louth, Manchester Evening News)](https://www.manchestereveningnews.co.uk/whats-on/joy-division-artwork-hacienda-sign-14344682)
+</div>
