@@ -158,7 +158,7 @@ plot +
 
 The `ggridges` package was created as a `ggplot2` extension to allow ridge line
 plots, specifically plots inspired by the Joy Division *Unknown Pleasures* album
-cover (the resulting plots were originally called joy plots). I had been messing
+cover (the resulting plots were originally called [joy plots](http://blog.revolutionanalytics.com/2017/07/joyplots.html)). I had been messing
 around with trying to create a version of this plot for some of my kymograph
 data, just because I thought it would look cool. `ggridges` is far
 more elegant than my solution, although the jury is out on whether this is
