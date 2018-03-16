@@ -1,0 +1,38 @@
+---
+title: Moving the blog
+author: Ali Twelvetrees
+date: '2018-03-06'
+slug: moving-the-blog
+categories:
+  - R
+tags:
+  - sci-life
+  - R
+  - blogging
+  - publishing
+---
+
+I moved my blog! Not just in terms of where it's hosted, but how the whole thing
+is built. Previously I'd been using [ghost](https://ghost.org/), which was fine up until the moment I wanted to publish more code/analysis. The process of copy-pasting code and exporting images was taking more time than writing the code itself.  
+
+I'm now using the `blogdown` package which builds static websites within RStudio
+using Hugo *and* lets you publish the results. The key thing being that you can
+publish an R notebook directly from the console where the analysis is written,
+while `blogdown` does all the hard (boring) work. I went for the
+[GitHub](https://github.com/) -> [Netlify](https://www.netlify.com/) route to
+publishing, as recommended by `blogdown` creator [Yihui
+Xie](https://yihui.name/en/about/). Given that I have only the vaguest of
+notions about how all that works, it was surprisingly straight forward to set up
+thanks to really excellent documentation. I'm currently using the
+[tranquilpeak](https://github.com/kakawait/hugo-tranquilpeak-theme) Hugo theme
+and using a sub-domain of the lab website to point to Netlify. This also forced
+me to learn to interact with GitHub more sensibly, which has been on my to do
+list for about five years - better late than never :)
+
+Handy resources if you're looking to do the same:  
+
+* The blog down book by Yihui Xei et al., [blogdown: Creating Websites with R Markdown](https://bookdown.org/yihui/blogdown/)  
+* Jenny Bryan's intro to GitHub book, [Happy Git and GitHub for the useR](http://happygitwithr.com/)
+
+The only gotcha I encountered: the automatically generated .Icon file created by OSX in any new folder halted compilation when I initially rendered my
+website locally. This was easily fixed by deleting the file.

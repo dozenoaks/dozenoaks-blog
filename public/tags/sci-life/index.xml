@@ -6,10 +6,20 @@
     <description>Recent content in Sci Life on Dozenoaks Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Nov 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 06 Mar 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/sci-life/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Moving the blog</title>
+      <link>/2018/03/moving-the-blog/</link>
+      <pubDate>Tue, 06 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/03/moving-the-blog/</guid>
+      <description>I moved my blog! Not just in terms of where it’s hosted, but how the whole thing is built. Previously I’d been using ghost, which was fine up until the moment I wanted to publish more code/analysis. The process of copy-pasting code and exporting images was taking more time than writing the code itself.
+I’m now using the blogdown package which builds static websites within RStudio using Hugo and lets you publish the results.</description>
+    </item>
     
     <item>
       <title>Sci twitter like a ‘pro&#39;</title>

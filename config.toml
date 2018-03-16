@@ -33,7 +33,7 @@ canonifyurls = true
   archive = "archives"
 
 [author]
-  name = "Dr Alison Twelvetrees"
+  name = "Ali Twelvetrees"
   bio = "Research scientist looking at kinesin, dynein and neurons; trying to figure out how stuff moves around inside neurons and how it goes wrong in neurodegeneration."
   job = "Vice Chancellor's Fellow"
   location = "Sheffield"

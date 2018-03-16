@@ -9,7 +9,7 @@ categories:
   - Comment
 tags:
   - microscopy
-  - imageJ
+  - ImageJ
   - image analysis
   - microtubules
 ---
