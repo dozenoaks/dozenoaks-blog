@@ -1,5 +1,7 @@
 ---
 title: Plotting mixture models in ggplot2
+thumbnailImagePosition: left
+thumbnailImage: /post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/final-solution-1.png
 author: Ali Twelvetrees
 date: '2019-06-11'
 slug: mixture-models
@@ -13,6 +15,10 @@ tags:
 
 
 
+<p>This post deals with something niche but
+practical - getting ggplot2 to plot multiple fitted gaussians from a model with different
+amplitudes. Google failed to provide the answer I was looking for - if you can’t
+find it with Google, it must need a blog post.</p>
 <p>We have a couple of different projects running at the moment that need us to
 think about mixture models - these are common in single molecule biophysics work
 as you frequently end up with two or more populations of molecules stretched out
@@ -30,17 +36,15 @@ is really well written too).</p>
 for your data. And also some that do a far better job than this biologist is
 ever going to do of explaining the Expectation-Maximization Algorithm<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> that’s
 at work. It’s worth noting that <code>mixtools</code> has a whole suite of tools for
-estimating the number of guassians in your sample (not trivial) and can deal
-with non-normal distributions. This post deals with something altogether more
-practical - getting ggplot2 to plot multiple guassians with different
-amplitudes. Google failed to provide the answer I was looking for - if you can’t
-find it with Google, it must need a blog post.</p>
+estimating the number of gaussians in your sample (not trivial) and can deal
+with non-normal distributions.</p>
 <div id="set-up-and-getting-the-model" class="section level3">
 <h3>set up and getting the model</h3>
-<pre class="r"><code>#&#39; libraries needed
+<pre class="r"><code>#libraries needed
 library(tidyverse)
 library(mixtools)
 
+#just a plotting theme
 ggplot2::theme_set(
   theme_bw() +
     theme(
@@ -54,20 +58,20 @@ ggplot2::theme_set(
 the same standard deviation, but with half the observations in one group
 compared to the other:</p>
 <pre class="r"><code>set.seed(12) #better make this reproducible
-observations &lt;- tibble(obv = c(
+observations &lt;- tibble(value = c(
   rnorm(n = 125, mean = 0.1, sd = 0.2), #the first normal distribution
   rnorm(n = 250, mean = 0.8, sd = 0.2) #this second distribution is double the size of the first
   )
   )
 
 #and a quick gander...
-ggplot(observations, aes(x = obv)) + 
+ggplot(observations, aes(x = value)) + 
   geom_histogram(binwidth = 0.05)</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/simulate-data-1.png" width="672" /></p>
-<p>Next let’s get <code>mixtools</code> to figure out where it thinks those guassians are:</p>
-<pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 2) # telling it to find two gaussians in the observations</code></pre>
+<p>Next let’s get <code>mixtools</code> to figure out where it thinks those gaussians are:</p>
+<pre class="r"><code>my_mix &lt;- normalmixEM(observations$value, k = 2) #telling it to find two gaussians in the observations</code></pre>
 <pre><code>## number of iterations= 38</code></pre>
-<pre class="r"><code>plot(my_mix, which = 2) # looking at the model produced with base graphics</code></pre>
+<pre class="r"><code>plot(my_mix, which = 2) #looking at the model produced with base graphics</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/find-gaussians-1.png" width="672" /></p>
 </div>
 <div id="the-problem" class="section level3">
@@ -75,40 +79,43 @@ ggplot(observations, aes(x = obv)) +
 <p>For publication ready plots we need to move over to ggplot2 rather than base
 graphics (some will argue no doubt, but there’s value in making graphics as
 human friendly as possible for communicating science).
-<code>normalmixEM</code> provides a list of 9 outputs for the guassians it calculates,
+<code>normalmixEM</code> provides a list of 9 outputs for the gaussians it calculates,
 including the mean, standard deviation and amplitude:</p>
-<pre class="r"><code>my_mix[[&quot;mu&quot;]] # means</code></pre>
+<pre class="r"><code>my_mix[[&quot;mu&quot;]] #means</code></pre>
 <pre><code>## [1] 0.08612553 0.79291123</code></pre>
-<pre class="r"><code>my_mix[[&quot;sigma&quot;]] # standard deviations</code></pre>
+<pre class="r"><code>my_mix[[&quot;sigma&quot;]] #standard deviations</code></pre>
 <pre><code>## [1] 0.1638908 0.1950395</code></pre>
-<pre class="r"><code>my_mix[[&quot;lambda&quot;]] # amplitudes</code></pre>
+<pre class="r"><code>my_mix[[&quot;lambda&quot;]] #amplitudes</code></pre>
 <pre><code>## [1] 0.3262176 0.6737824</code></pre>
 <p>It’s straight forward enough to use <code>dnorm</code> with <code>stat_function</code> to plot a
-gaussian line on top of a histogram. Two guassians requires two <code>stat_functions</code>
+gaussian line on top of a histogram. Two gaussians requires two <code>stat_functions</code>
 - not a big deal, but if you’ve got a data set with four or five, or you want to
 insert this more programmatically into an analysis script you quickly hit
 problems.</p>
-<pre class="r"><code>ggplot(observations, aes(x = obv)) + 
+<pre class="r"><code>ggplot(observations, aes(x = value)) + 
   geom_histogram(binwidth = 0.05) +
   stat_function(fun = dnorm, 
-                args = list(mean = my_mix[[&quot;mu&quot;]][[1]], sd = my_mix[[&quot;sigma&quot;]][[1]])) +
+                args = list(mean = my_mix[[&quot;mu&quot;]][[1]], 
+                            sd = my_mix[[&quot;sigma&quot;]][[1]])) +
   stat_function(fun = dnorm, 
-                args = list(mean = my_mix[[&quot;mu&quot;]][[2]], sd = my_mix[[&quot;sigma&quot;]][[2]]))</code></pre>
+                args = list(mean = my_mix[[&quot;mu&quot;]][[2]], 
+                            sd = my_mix[[&quot;sigma&quot;]][[2]]))</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/plot-basic-gaussians-1.png" width="672" /></p>
 <p>There’s another couple of problems immediately. The gaussians are expressed as
 densities and the histogram as counts. Adding the aes <code>y = ..density..</code> to the
 histogram can fix this problem, but only if you want to express the data as a
 density instead of event counts. More difficult, <code>dnorm</code> doesn’t have an
 argument for the relative amplitude, so both gaussians have the same area. Three
-things need fixing - plot all the guassians in a single call, convert them to be
+things need fixing - plot all the gaussians in a single call, convert them to be
 proportional to counts and incorporate the relative amplitude. Plotting multiple
 instances of a function requires <code>mapply</code> - the above plot can also be made like
 this:</p>
-<pre class="r"><code>ggplot(observations, aes(x = obv)) + 
+<pre class="r"><code>ggplot(observations, aes(x = value)) + 
   geom_histogram(binwidth = 0.05) +
   mapply(function(mean, sd) {
     stat_function(fun = dnorm, args = list(mean = mean, sd = sd))
     },
+    #the argument definitions hang out down here
     mean = my_mix[[&quot;mu&quot;]], 
     sd = my_mix[[&quot;sigma&quot;]]
   )</code></pre>
@@ -121,7 +128,7 @@ the number of observations in the data set and the bin width of the histogram.
 If we’re creating a function to modify <code>dnorm</code> then it can also incorporate the
 amplitude, <code>my_mix[[&quot;lambda&quot;]]</code>. I need to nest a new function with extra
 arguments inside <code>stat_function</code> to modify <code>dnorm</code>.</p>
-<pre class="r"><code>ggplot(observations, aes(x = obv)) +
+<pre class="r"><code>ggplot(observations, aes(x = value)) +
   geom_histogram(binwidth = 0.05) +
   mapply(
     function(mean, sd, lambda, n, binwidth) {
@@ -134,25 +141,23 @@ arguments inside <code>stat_function</code> to modify <code>dnorm</code>.</p>
     mean = my_mix[[&quot;mu&quot;]], #mean
     sd = my_mix[[&quot;sigma&quot;]], #standard deviation
     lambda = my_mix[[&quot;lambda&quot;]], #amplitude
-    n = length(observations$obv), #sample size
+    n = length(observations$value), #sample size
     binwidth = 0.05 #binwidth used for histogram
   )</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/final-solution-1.png" width="672" /></p>
 <p>That’s more like it! And just to check it works for a more complicated data set
 with more than two distributions:</p>
-<pre class="r"><code>set.seed(12)
-observations &lt;- data_frame(obv = c(
+<pre class="r"><code>observations &lt;- tibble(value = c(
   rnorm(n = 125, mean = 0.1, sd = 0.2),
   rnorm(n = 175, mean = 0.4, sd = 0.05),
   rnorm(n = 250, mean = 0.6, sd = 0.05),
   rnorm(n = 250, mean = 0.8, sd = 0.2)
   )
-  )</code></pre>
-<pre><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
-## This warning is displayed once per session.</code></pre>
-<pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 4)</code></pre>
-<pre><code>## number of iterations= 736</code></pre>
-<pre class="r"><code>ggplot(observations, aes(x = obv)) + 
+  )
+
+my_mix &lt;- normalmixEM(observations$value, k = 4)</code></pre>
+<pre><code>## number of iterations= 167</code></pre>
+<pre class="r"><code>ggplot(observations, aes(x = value)) + 
   geom_histogram(binwidth = 0.05) +
   mapply(function(mean, sd, lambda, n, binwidth) {
     stat_function(
@@ -164,7 +169,7 @@ observations &lt;- data_frame(obv = c(
     mean = my_mix[[&quot;mu&quot;]], 
     sd = my_mix[[&quot;sigma&quot;]],
     lambda = my_mix[[&quot;lambda&quot;]],
-    n = length(observations$obv),
+    n = length(observations$value),
     binwidth = 0.05
   )</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/checking-with-more-groups-1.png" width="672" /></p>

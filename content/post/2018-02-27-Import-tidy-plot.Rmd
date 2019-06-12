@@ -138,7 +138,7 @@ automated into one wrapper function. You don't need to think this hard every
 time. And once your data is in the table you can start the real work of
 analysis. You also get to do cool things like this:
 
-```{r ridge-plot}
+```{r ridge-plot, message=FALSE, warning=FALSE}
 library(ggridges)
 
 plot <- kymo_data %>% ggplot(., aes(x = Pixel_position, y = max(Time_point)-Time_point, group = Time_point, height = Intensity))

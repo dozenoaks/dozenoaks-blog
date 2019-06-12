@@ -36,3 +36,7 @@ Handy resources if you're looking to do the same:
 
 The only gotcha I encountered: the automatically generated .Icon file created by OSX in any new folder halted compilation when I initially rendered my
 website locally. This was easily fixed by deleting the file.
+
+### edited to add
+
+I added syntax highlighting to the theme (12th June 2019) using [this very helpful guide](https://amber.rbind.io/2017/11/15/syntaxhighlighting/)

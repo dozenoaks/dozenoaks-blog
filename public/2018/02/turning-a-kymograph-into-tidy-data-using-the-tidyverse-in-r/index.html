@@ -410,13 +410,9 @@ to do such a thing?!? Well, all the steps I’ve just walked through can be
 automated into one wrapper function. You don’t need to think this hard every
 time. And once your data is in the table you can start the real work of
 analysis. You also get to do cool things like this:</p>
-<pre class="r"><code>library(ggridges)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;ggridges&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
-## 
-##     scale_discrete_manual</code></pre>
-<pre class="r"><code>plot &lt;- kymo_data %&gt;% ggplot(., aes(x = Pixel_position, y = max(Time_point)-Time_point, group = Time_point, height = Intensity))
+<pre class="r"><code>library(ggridges)
+
+plot &lt;- kymo_data %&gt;% ggplot(., aes(x = Pixel_position, y = max(Time_point)-Time_point, group = Time_point, height = Intensity))
 plot + 
   geom_ridgeline(scale = 5, fill = &quot;#33CCCC&quot;, colour = &quot;white&quot;, size = 0.25) + 
   coord_cartesian(xlim = c(300, 800)) +
@@ -713,7 +709,8 @@ axonal transport :) And if anyone wants to gift me a neon kymograph for the offi
                   Jun 6, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else. A common solution to figuring out what the typical representative values are in the mixed population is to fit multiple gaussians to the data and describe the mean and standard deviation of each.</div>
+              <div class="media-content hide-xs font-merryweather">This post deals with something niche but practical - getting ggplot2 to plot multiple fitted gaussians from a model with different amplitudes. Google failed to provide the answer I was looking for - if you can’t find it with Google, it must need a blog post.
+We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else.</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
