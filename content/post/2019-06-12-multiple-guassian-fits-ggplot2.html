@@ -43,23 +43,22 @@ library(mixtools)</code></pre>
 <p>First let’s simulate a data set comprised of two groups with different means and
 the same standard deviation, but with half the observations in one group
 compared to the other:</p>
-<pre class="r"><code>set.seed(12) #better make this reproducible
-observations &lt;- data_frame(obv = c(
-  rnorm(n = 125, mean = 0.1, sd = 0.2), #the first normal distribution
-  rnorm(n = 250, mean = 0.8, sd = 0.2) #this second distribution is double the size of the first
+<pre class="r"><code>set.seed(12) # better make this reproducible
+observations &lt;- tibble(obv = c(
+  rnorm(n = 125, mean = 0.1, sd = 0.2), # the first normal distribution
+  rnorm(n = 250, mean = 0.8, sd = 0.2) # this second distribution is double the size of the first
   )
-  )</code></pre>
-<pre><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
-## This warning is displayed once per session.</code></pre>
-<pre class="r"><code>#and a quick gander...
+  )
+
+# and a quick gander...
 ggplot(observations, aes(x = obv)) + 
   geom_histogram(binwidth = 0.05) +
   theme_bw()</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/simulate-data-1.png" width="672" /></p>
 <p>Next let’s get <code>mixtools</code> to figure out where it thinks those guassians are:</p>
-<pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 2) #telling it to find to gaussians in the observations</code></pre>
+<pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 2) # telling it to find two gaussians in the observations</code></pre>
 <pre><code>## number of iterations= 38</code></pre>
-<pre class="r"><code>plot(my_mix, which = 2) #looking at the model produced with base graphics</code></pre>
+<pre class="r"><code>plot(my_mix, which = 2) # looking at the model produced with base graphics</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/find-gaussians-1.png" width="672" /></p>
 </div>
 <div id="the-problem" class="section level3">
@@ -142,9 +141,10 @@ observations &lt;- data_frame(obv = c(
   rnorm(n = 250, mean = 0.6, sd = 0.05),
   rnorm(n = 250, mean = 0.8, sd = 0.2)
   )
-  )
-
-my_mix &lt;- normalmixEM(observations$obv, k = 4)</code></pre>
+  )</code></pre>
+<pre><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
+## This warning is displayed once per session.</code></pre>
+<pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 4)</code></pre>
 <pre><code>## number of iterations= 736</code></pre>
 <pre class="r"><code>ggplot(observations, aes(x = obv)) + 
   geom_histogram(binwidth = 0.05) +

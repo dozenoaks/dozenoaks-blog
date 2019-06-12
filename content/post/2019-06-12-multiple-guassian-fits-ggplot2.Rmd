@@ -59,24 +59,25 @@ compared to the other:
 
 
 ```{r simulate-data}
-set.seed(12) #better make this reproducible
-observations <- data_frame(obv = c(
-  rnorm(n = 125, mean = 0.1, sd = 0.2), #the first normal distribution
-  rnorm(n = 250, mean = 0.8, sd = 0.2) #this second distribution is double the size of the first
+set.seed(12) # better make this reproducible
+observations <- tibble(obv = c(
+  rnorm(n = 125, mean = 0.1, sd = 0.2), # the first normal distribution
+  rnorm(n = 250, mean = 0.8, sd = 0.2) # this second distribution is double the size of the first
   )
   )
 
-#and a quick gander...
+# and a quick gander...
 ggplot(observations, aes(x = obv)) + 
   geom_histogram(binwidth = 0.05) +
   theme_bw()
 ```
 
 Next let's get `mixtools` to figure out where it thinks those guassians are:
-  ```{r find-gaussians}
-my_mix <- normalmixEM(observations$obv, k = 2) #telling it to find to gaussians in the observations
+  
+```{r find-gaussians}
+my_mix <- normalmixEM(observations$obv, k = 2) # telling it to find two gaussians in the observations
 
-plot(my_mix, which = 2) #looking at the model produced with base graphics
+plot(my_mix, which = 2) # looking at the model produced with base graphics
 ```
 
 ### the problem
