@@ -1,54 +1,85 @@
 ---
-title: "Plotting mixture models in ggplot2"
-author: "Ali Twelvetrees"
+title: Plotting mixture models in ggplot2
+author: Ali Twelvetrees
 date: '2019-06-11'
+slug: mixture-models
+categories:
+  - R
 tags:
-- ggplot2
-- R
-- mixture models
-thumbnailImage: null
-thumbnailImagePosition: left
-categories: R
+  - ggplot2
+  - R
+  - mixture models
 ---
 
 
 
-<p>We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else. A common solution to figuring out what the typical representative values are in the mixed population is to fit multiple gaussians to the data and describe the mean and standard deviation of each. Doing this also allows you to describe the relative size of each population if this changes with conditions. <a href="https://cran.r-project.org/web/packages/mixtools/index.html">The <code>mixtools</code> package</a><a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> for R does all this and more - it’s a fantastic resource (and the <a href="https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf">vignette</a><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> is really well written too).</p>
-<p>There are already some great blog posts<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> <a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> that go into using the <code>normalmixEM</code> function to find a specified number (<em>k</em>) of best fit gaussians for your data. And also some that do a far better job than this biologist is ever going to do of explaining the Expectation-Maximization Algorithm<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> that’s at work. It’s worth noting that <code>mixtools</code> has a whole suite of tools for estimating the number of guassians in your sample (not trivial) and can deal with non-normal distributions. This post deals with something altogether more practical - getting ggplot2 to plot multiple guassians with different amplitudes. Google failed to provide the answer I was looking for - if you can’t find it with Google, it must need a blog post.</p>
+<p>We have a couple of different projects running at the moment that need us to
+think about mixture models - these are common in single molecule biophysics work
+as you frequently end up with two or more populations of molecules stretched out
+along a continuous variable; could be velocity, step size or something else. A
+common solution to figuring out what the typical representative values are in
+the mixed population is to fit multiple gaussians to the data and describe the
+mean and standard deviation of each. Doing this also allows you to describe the
+relative size of each population if this changes with conditions. <a href="https://cran.r-project.org/web/packages/mixtools/index.html">The <code>mixtools</code>
+package</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> for R
+does all this and more - it’s a fantastic resource (and the
+<a href="https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf">vignette</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+is really well written too).</p>
+<p>There are already some great blog posts<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> <a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> that go into using the
+<code>normalmixEM</code> function to find a specified number (<em>k</em>) of best fit gaussians
+for your data. And also some that do a far better job than this biologist is
+ever going to do of explaining the Expectation-Maximization Algorithm<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> that’s
+at work. It’s worth noting that <code>mixtools</code> has a whole suite of tools for
+estimating the number of guassians in your sample (not trivial) and can deal
+with non-normal distributions. This post deals with something altogether more
+practical - getting ggplot2 to plot multiple guassians with different
+amplitudes. Google failed to provide the answer I was looking for - if you can’t
+find it with Google, it must need a blog post.</p>
 <div id="set-up-and-getting-the-model" class="section level3">
 <h3>set up and getting the model</h3>
-<pre class="r"><code>library(tidyverse)
+<pre class="r"><code>#libraries needed
+library(tidyverse)
 library(mixtools)</code></pre>
-<p>First let’s simulate a data set comprised of two groups with different means and the same standard deviation, but with half the observations in one group compared to the other:</p>
+<p>First let’s simulate a data set comprised of two groups with different means and
+the same standard deviation, but with half the observations in one group
+compared to the other:</p>
 <pre class="r"><code>set.seed(12) #better make this reproducible
 observations &lt;- data_frame(obv = c(
   rnorm(n = 125, mean = 0.1, sd = 0.2), #the first normal distribution
   rnorm(n = 250, mean = 0.8, sd = 0.2) #this second distribution is double the size of the first
   )
-  )
-
-#and a quick gander...
+  )</code></pre>
+<pre><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
+## This warning is displayed once per session.</code></pre>
+<pre class="r"><code>#and a quick gander...
 ggplot(observations, aes(x = obv)) + 
   geom_histogram(binwidth = 0.05) +
   theme_bw()</code></pre>
-<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/simulate-data-1.png" width="672" /></p>
 <p>Next let’s get <code>mixtools</code> to figure out where it thinks those guassians are:</p>
 <pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 2) #telling it to find to gaussians in the observations</code></pre>
 <pre><code>## number of iterations= 38</code></pre>
 <pre class="r"><code>plot(my_mix, which = 2) #looking at the model produced with base graphics</code></pre>
-<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/find-gaussians-1.png" width="672" /></p>
 </div>
 <div id="the-problem" class="section level3">
 <h3>the problem</h3>
-<p>For publication ready plots we need to move over to ggplot2 rather than base graphics (some will argue no doubt, but there’s value in making graphics as human friendly as possible for communicating science).</p>
-<p><code>normalmixEM</code> provides a list of 9 outputs for the guassians it calculates, including the mean, standard deviation and amplitude:</p>
+<p>For publication ready plots we need to move over to ggplot2 rather than base
+graphics (some will argue no doubt, but there’s value in making graphics as
+human friendly as possible for communicating science).
+<code>normalmixEM</code> provides a list of 9 outputs for the guassians it calculates,
+including the mean, standard deviation and amplitude:</p>
 <pre class="r"><code>my_mix[[&quot;mu&quot;]] # means</code></pre>
 <pre><code>## [1] 0.08612553 0.79291123</code></pre>
 <pre class="r"><code>my_mix[[&quot;sigma&quot;]] # standard deviations</code></pre>
 <pre><code>## [1] 0.1638908 0.1950395</code></pre>
 <pre class="r"><code>my_mix[[&quot;lambda&quot;]] # amplitudes</code></pre>
 <pre><code>## [1] 0.3262176 0.6737824</code></pre>
-<p>It’s straight forward enough to use <code>dnorm</code> with <code>stat_function</code> to plot a gaussian line on top of a histogram. Two guassians requires two <code>stat_functions</code> - not a big deal, but if you’ve got a data set with four or five, or you want to insert this more programmatically into an analysis script you quickly hit problems.</p>
+<p>It’s straight forward enough to use <code>dnorm</code> with <code>stat_function</code> to plot a
+gaussian line on top of a histogram. Two guassians requires two <code>stat_functions</code>
+- not a big deal, but if you’ve got a data set with four or five, or you want to
+insert this more programmatically into an analysis script you quickly hit
+problems.</p>
 <pre class="r"><code>ggplot(observations, aes(x = obv)) + 
   geom_histogram(binwidth = 0.05) +
   stat_function(fun = dnorm, 
@@ -56,8 +87,16 @@ ggplot(observations, aes(x = obv)) +
   stat_function(fun = dnorm, 
                 args = list(mean = my_mix[[&quot;mu&quot;]][[2]], sd = my_mix[[&quot;sigma&quot;]][[2]])) +
   theme_bw()</code></pre>
-<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/unnamed-chunk-4-1.png" width="672" /> There’s another couple of problems immediately. The gaussians are expressed as densities and the histogram as counts. Adding the aes <code>y = ..density..</code> to the histogram can fix this problem, but only if you want to express the data as a density instead of event counts. More difficult, <code>dnorm</code> doesn’t have an argument for the relative amplitude, so both gaussians have the same area. Three things need fixing - plot all the guassians in a single call, convert them to be proportional to counts and incorporate the relative amplitude.</p>
-<p>Plotting multiple instances of a function requires <code>mapply</code> - the above plot can also be made like this:</p>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/plot-basic-gaussians-1.png" width="672" /></p>
+<p>There’s another couple of problems immediately. The gaussians are expressed as
+densities and the histogram as counts. Adding the aes <code>y = ..density..</code> to the
+histogram can fix this problem, but only if you want to express the data as a
+density instead of event counts. More difficult, <code>dnorm</code> doesn’t have an
+argument for the relative amplitude, so both gaussians have the same area. Three
+things need fixing - plot all the guassians in a single call, convert them to be
+proportional to counts and incorporate the relative amplitude. Plotting multiple
+instances of a function requires <code>mapply</code> - the above plot can also be made like
+this:</p>
 <pre class="r"><code>ggplot(observations, aes(x = obv)) + 
   geom_histogram(binwidth = 0.05) +
   mapply(function(mean, sd) {
@@ -67,29 +106,35 @@ ggplot(observations, aes(x = obv)) +
     sd = my_mix[[&quot;sigma&quot;]]
   ) +
   theme_bw()</code></pre>
-<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/use-mapply-1.png" width="672" /></p>
 </div>
 <div id="the-solution" class="section level3">
 <h3>the solution</h3>
-<p>Scaling the gaussian density to the count number requires taking into account the number of observations in the data set and the bin width of the histogram. If we’re creating a function to modify <code>dnorm</code> then it can also incorporate the amplitude, <code>my_mix[[&quot;lambda&quot;]]</code>. I need to nest a new function with extra arguments inside <code>stat_function</code> to modify <code>dnorm</code>.</p>
-<pre class="r"><code>ggplot(observations, aes(x = obv)) + 
+<p>Scaling the gaussian density to the count number requires taking into account
+the number of observations in the data set and the bin width of the histogram.
+If we’re creating a function to modify <code>dnorm</code> then it can also incorporate the
+amplitude, <code>my_mix[[&quot;lambda&quot;]]</code>. I need to nest a new function with extra
+arguments inside <code>stat_function</code> to modify <code>dnorm</code>.</p>
+<pre class="r"><code>ggplot(observations, aes(x = obv)) +
   geom_histogram(binwidth = 0.05) +
-  mapply(function(mean, sd, lambda, n, binwidth) {
-    stat_function(
-      fun = function(x) {
-        (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
+  mapply(
+    function(mean, sd, lambda, n, binwidth) {
+      stat_function(
+        fun = function(x) {
+          (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
         }
       )
     },
-    mean = my_mix[[&quot;mu&quot;]], 
-    sd = my_mix[[&quot;sigma&quot;]],
-    lambda = my_mix[[&quot;lambda&quot;]],
-    n = length(observations$obv),
-    binwidth = 0.05
+    mean = my_mix[[&quot;mu&quot;]], #mean
+    sd = my_mix[[&quot;sigma&quot;]], #standard deviation
+    lambda = my_mix[[&quot;lambda&quot;]], #amplitude
+    n = length(observations$obv), #sample size
+    binwidth = 0.05 #binwidth used for histogram
   ) +
   theme_bw()</code></pre>
-<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>That’s more like it! And just to check it works for a more complicated data set with more than two distributions:</p>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/final-solution-1.png" width="672" /></p>
+<p>That’s more like it! And just to check it works for a more complicated data set
+with more than two distributions:</p>
 <pre class="r"><code>set.seed(12)
 observations &lt;- data_frame(obv = c(
   rnorm(n = 125, mean = 0.1, sd = 0.2),
@@ -117,106 +162,108 @@ my_mix &lt;- normalmixEM(observations$obv, k = 4)</code></pre>
     binwidth = 0.05
   ) +
   theme_bw()</code></pre>
-<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/checking-with-more-groups-1.png" width="672" /></p>
 </div>
 <div id="r-session" class="section level3">
 <h3>R session</h3>
 <pre class="r"><code>devtools::session_info()</code></pre>
-<pre><code>## Warning in as.POSIXlt.POSIXct(Sys.time()): unknown timezone &#39;zone/tz/2019a.
-## 1.0/zoneinfo/Europe/London&#39;</code></pre>
-<pre><code>## Session info -------------------------------------------------------------</code></pre>
-<pre><code>##  setting  value                       
-##  version  R version 3.4.2 (2017-09-28)
+<pre><code>## ─ Session info ──────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.0 (2019-04-26)
+##  os       macOS Mojave 10.14          
 ##  system   x86_64, darwin15.6.0        
 ##  ui       X11                         
 ##  language (EN)                        
 ##  collate  en_GB.UTF-8                 
-##  tz       &lt;NA&gt;                        
-##  date     2019-06-12</code></pre>
-<pre><code>## Packages -----------------------------------------------------------------</code></pre>
-<pre><code>##  package    * version date       source        
-##  assertthat   0.2.0   2017-04-11 CRAN (R 3.4.0)
-##  backports    1.1.2   2017-12-13 CRAN (R 3.4.3)
-##  base       * 3.4.2   2017-10-04 local         
-##  bindr        0.1.1   2018-03-13 cran (@0.1.1) 
-##  bindrcpp     0.2.2   2018-03-29 cran (@0.2.2) 
-##  blogdown     0.8     2018-07-15 CRAN (R 3.4.2)
-##  bookdown     0.7     2018-02-18 CRAN (R 3.4.3)
-##  broom        0.5.0   2018-07-17 CRAN (R 3.4.2)
-##  cellranger   1.1.0   2016-07-27 CRAN (R 3.4.0)
-##  cli          1.0.1   2018-09-25 CRAN (R 3.4.2)
-##  colorspace   1.3-2   2016-12-14 CRAN (R 3.4.0)
-##  compiler     3.4.2   2017-10-04 local         
-##  crayon       1.3.4   2017-09-16 CRAN (R 3.4.1)
-##  datasets   * 3.4.2   2017-10-04 local         
-##  devtools     1.13.6  2018-06-27 CRAN (R 3.4.4)
-##  digest       0.6.17  2018-09-12 CRAN (R 3.4.4)
-##  dplyr      * 0.7.6   2018-06-29 CRAN (R 3.4.4)
-##  evaluate     0.11    2018-07-17 CRAN (R 3.4.4)
-##  forcats    * 0.3.0   2018-02-19 CRAN (R 3.4.3)
-##  ggplot2    * 3.0.0   2018-07-03 CRAN (R 3.4.4)
-##  glue         1.3.0   2018-07-17 CRAN (R 3.4.4)
-##  graphics   * 3.4.2   2017-10-04 local         
-##  grDevices  * 3.4.2   2017-10-04 local         
-##  grid         3.4.2   2017-10-04 local         
-##  gtable       0.2.0   2016-02-26 CRAN (R 3.4.0)
-##  haven        1.1.2   2018-06-27 CRAN (R 3.4.4)
-##  hms          0.4.2   2018-03-10 CRAN (R 3.4.2)
-##  htmltools    0.3.6   2017-04-28 CRAN (R 3.4.0)
-##  httr         1.3.1   2017-08-20 CRAN (R 3.4.1)
-##  jsonlite     1.5     2017-06-01 CRAN (R 3.4.0)
-##  knitr        1.20    2018-02-20 CRAN (R 3.4.2)
-##  labeling     0.3     2014-08-23 CRAN (R 3.4.0)
-##  lattice      0.20-35 2017-03-25 CRAN (R 3.4.2)
-##  lazyeval     0.2.1   2017-10-29 CRAN (R 3.4.2)
-##  lubridate    1.7.4   2018-04-11 CRAN (R 3.4.4)
-##  magrittr     1.5     2014-11-22 CRAN (R 3.4.0)
-##  MASS         7.3-50  2018-04-30 CRAN (R 3.4.4)
-##  Matrix       1.2-14  2018-04-09 CRAN (R 3.4.4)
-##  memoise      1.1.0   2017-04-21 CRAN (R 3.4.0)
-##  methods    * 3.4.2   2017-10-04 local         
-##  mixtools   * 1.1.0   2017-03-10 CRAN (R 3.4.0)
-##  modelr       0.1.2   2018-05-11 CRAN (R 3.4.4)
-##  munsell      0.5.0   2018-06-12 CRAN (R 3.4.2)
-##  nlme         3.1-137 2018-04-07 CRAN (R 3.4.4)
-##  pillar       1.3.0   2018-07-14 CRAN (R 3.4.4)
-##  pkgconfig    2.0.2   2018-08-16 CRAN (R 3.4.4)
-##  plyr         1.8.4   2016-06-08 CRAN (R 3.4.0)
-##  purrr      * 0.2.5   2018-05-29 cran (@0.2.5) 
-##  R6           2.2.2   2017-06-17 CRAN (R 3.4.0)
-##  Rcpp         0.12.18 2018-07-23 CRAN (R 3.4.4)
-##  readr      * 1.1.1   2017-05-16 CRAN (R 3.4.0)
-##  readxl       1.1.0   2018-04-20 CRAN (R 3.4.4)
-##  rlang        0.2.2   2018-08-16 CRAN (R 3.4.4)
-##  rmarkdown    1.10    2018-06-11 CRAN (R 3.4.2)
-##  rprojroot    1.3-2   2018-01-03 CRAN (R 3.4.3)
-##  rstudioapi   0.7     2017-09-07 CRAN (R 3.4.1)
-##  rvest        0.3.2   2016-06-17 CRAN (R 3.4.0)
-##  scales       1.0.0   2018-08-09 CRAN (R 3.4.4)
-##  segmented    0.5-3.0 2017-11-30 CRAN (R 3.4.3)
-##  splines      3.4.2   2017-10-04 local         
-##  stats      * 3.4.2   2017-10-04 local         
-##  stringi      1.2.4   2018-07-20 CRAN (R 3.4.4)
-##  stringr    * 1.3.1   2018-05-10 cran (@1.3.1) 
-##  survival     2.42-6  2018-07-13 CRAN (R 3.4.4)
-##  tibble     * 1.4.2   2018-01-22 CRAN (R 3.4.3)
-##  tidyr      * 0.8.1   2018-05-18 cran (@0.8.1) 
-##  tidyselect   0.2.4   2018-02-26 CRAN (R 3.4.3)
-##  tidyverse  * 1.2.1   2017-11-14 CRAN (R 3.4.2)
-##  tools        3.4.2   2017-10-04 local         
-##  utils      * 3.4.2   2017-10-04 local         
-##  withr        2.1.2   2018-03-15 CRAN (R 3.4.4)
-##  xfun         0.3     2018-07-06 CRAN (R 3.4.4)
-##  xml2         1.2.0   2018-01-24 CRAN (R 3.4.3)
-##  yaml         2.2.0   2018-07-25 CRAN (R 3.4.4)</code></pre>
+##  ctype    en_GB.UTF-8                 
+##  tz       Europe/London               
+##  date     2019-06-12                  
+## 
+## ─ Packages ──────────────────────────────────────────────────────────────
+##  package     * version  date       lib source        
+##  assertthat    0.2.1    2019-03-21 [1] CRAN (R 3.6.0)
+##  backports     1.1.4    2019-04-10 [1] CRAN (R 3.6.0)
+##  blogdown      0.13     2019-06-11 [1] CRAN (R 3.6.0)
+##  bookdown      0.11     2019-05-28 [1] CRAN (R 3.6.0)
+##  broom         0.5.2    2019-04-07 [1] CRAN (R 3.6.0)
+##  callr         3.2.0    2019-03-15 [1] CRAN (R 3.6.0)
+##  cellranger    1.1.0    2016-07-27 [1] CRAN (R 3.6.0)
+##  cli           1.1.0    2019-03-19 [1] CRAN (R 3.6.0)
+##  colorspace    1.4-1    2019-03-18 [1] CRAN (R 3.6.0)
+##  crayon        1.3.4    2017-09-16 [1] CRAN (R 3.6.0)
+##  desc          1.2.0    2018-05-01 [1] CRAN (R 3.6.0)
+##  devtools      2.0.2    2019-04-08 [1] CRAN (R 3.6.0)
+##  digest        0.6.19   2019-05-20 [1] CRAN (R 3.6.0)
+##  dplyr       * 0.8.1    2019-05-14 [1] CRAN (R 3.6.0)
+##  evaluate      0.14     2019-05-28 [1] CRAN (R 3.6.0)
+##  forcats     * 0.4.0    2019-02-17 [1] CRAN (R 3.6.0)
+##  fs            1.3.1    2019-05-06 [1] CRAN (R 3.6.0)
+##  generics      0.0.2    2018-11-29 [1] CRAN (R 3.6.0)
+##  ggplot2     * 3.1.1    2019-04-07 [1] CRAN (R 3.6.0)
+##  glue          1.3.1    2019-03-12 [1] CRAN (R 3.6.0)
+##  gtable        0.3.0    2019-03-25 [1] CRAN (R 3.6.0)
+##  haven         2.1.0    2019-02-19 [1] CRAN (R 3.6.0)
+##  hms           0.4.2    2018-03-10 [1] CRAN (R 3.6.0)
+##  htmltools     0.3.6    2017-04-28 [1] CRAN (R 3.6.0)
+##  httr          1.4.0    2018-12-11 [1] CRAN (R 3.6.0)
+##  jsonlite      1.6      2018-12-07 [1] CRAN (R 3.6.0)
+##  knitr         1.23     2019-05-18 [1] CRAN (R 3.6.0)
+##  labeling      0.3      2014-08-23 [1] CRAN (R 3.6.0)
+##  lattice       0.20-38  2018-11-04 [1] CRAN (R 3.6.0)
+##  lazyeval      0.2.2    2019-03-15 [1] CRAN (R 3.6.0)
+##  lubridate     1.7.4    2018-04-11 [1] CRAN (R 3.6.0)
+##  magrittr      1.5      2014-11-22 [1] CRAN (R 3.6.0)
+##  MASS          7.3-51.4 2019-03-31 [1] CRAN (R 3.6.0)
+##  Matrix        1.2-17   2019-03-22 [1] CRAN (R 3.6.0)
+##  memoise       1.1.0    2017-04-21 [1] CRAN (R 3.6.0)
+##  mixtools    * 1.1.0    2017-03-10 [1] CRAN (R 3.6.0)
+##  modelr        0.1.4    2019-02-18 [1] CRAN (R 3.6.0)
+##  munsell       0.5.0    2018-06-12 [1] CRAN (R 3.6.0)
+##  nlme          3.1-140  2019-05-12 [1] CRAN (R 3.6.0)
+##  pillar        1.4.1    2019-05-28 [1] CRAN (R 3.6.0)
+##  pkgbuild      1.0.3    2019-03-20 [1] CRAN (R 3.6.0)
+##  pkgconfig     2.0.2    2018-08-16 [1] CRAN (R 3.6.0)
+##  pkgload       1.0.2    2018-10-29 [1] CRAN (R 3.6.0)
+##  plyr          1.8.4    2016-06-08 [1] CRAN (R 3.6.0)
+##  prettyunits   1.0.2    2015-07-13 [1] CRAN (R 3.6.0)
+##  processx      3.3.1    2019-05-08 [1] CRAN (R 3.6.0)
+##  ps            1.3.0    2018-12-21 [1] CRAN (R 3.6.0)
+##  purrr       * 0.3.2    2019-03-15 [1] CRAN (R 3.6.0)
+##  R6            2.4.0    2019-02-14 [1] CRAN (R 3.6.0)
+##  Rcpp          1.0.1    2019-03-17 [1] CRAN (R 3.6.0)
+##  readr       * 1.3.1    2018-12-21 [1] CRAN (R 3.6.0)
+##  readxl        1.3.1    2019-03-13 [1] CRAN (R 3.6.0)
+##  remotes       2.0.4    2019-04-10 [1] CRAN (R 3.6.0)
+##  rlang         0.3.4    2019-04-07 [1] CRAN (R 3.6.0)
+##  rmarkdown     1.13     2019-05-22 [1] CRAN (R 3.6.0)
+##  rprojroot     1.3-2    2018-01-03 [1] CRAN (R 3.6.0)
+##  rstudioapi    0.10     2019-03-19 [1] CRAN (R 3.6.0)
+##  rvest         0.3.4    2019-05-15 [1] CRAN (R 3.6.0)
+##  scales        1.0.0    2018-08-09 [1] CRAN (R 3.6.0)
+##  segmented     0.5-4.0  2019-05-13 [1] CRAN (R 3.6.0)
+##  sessioninfo   1.1.1    2018-11-05 [1] CRAN (R 3.6.0)
+##  stringi       1.4.3    2019-03-12 [1] CRAN (R 3.6.0)
+##  stringr     * 1.4.0    2019-02-10 [1] CRAN (R 3.6.0)
+##  survival      2.44-1.1 2019-04-01 [1] CRAN (R 3.6.0)
+##  tibble      * 2.1.3    2019-06-06 [1] CRAN (R 3.6.0)
+##  tidyr       * 0.8.3    2019-03-01 [1] CRAN (R 3.6.0)
+##  tidyselect    0.2.5    2018-10-11 [1] CRAN (R 3.6.0)
+##  tidyverse   * 1.2.1    2017-11-14 [1] CRAN (R 3.6.0)
+##  usethis       1.5.0    2019-04-07 [1] CRAN (R 3.6.0)
+##  withr         2.1.2    2018-03-15 [1] CRAN (R 3.6.0)
+##  xfun          0.7      2019-05-14 [1] CRAN (R 3.6.0)
+##  xml2          1.2.0    2018-01-24 [1] CRAN (R 3.6.0)
+##  yaml          2.2.0    2018-07-25 [1] CRAN (R 3.6.0)
+## 
+## [1] /Library/Frameworks/R.framework/Versions/3.6/Resources/library</code></pre>
 </div>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p><a href="https://cran.r-project.org/web/packages/mixtools/index.html" class="uri">https://cran.r-project.org/web/packages/mixtools/index.html</a><a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p><a href="https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf" class="uri">https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf</a><a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p><a href="https://exploringdatablog.blogspot.com/2011/08/fitting-mixture-distributions-with-r.html" class="uri">https://exploringdatablog.blogspot.com/2011/08/fitting-mixture-distributions-with-r.html</a><a href="#fnref3">↩</a></p></li>
-<li id="fn4"><p><a href="http://tinyheero.github.io/2015/10/13/mixture-model.html" class="uri">http://tinyheero.github.io/2015/10/13/mixture-model.html</a><a href="#fnref4">↩</a></p></li>
-<li id="fn5"><p><a href="http://tinyheero.github.io/2016/01/03/gmm-em.html#checking-for-convergence" class="uri">http://tinyheero.github.io/2016/01/03/gmm-em.html#checking-for-convergence</a><a href="#fnref5">↩</a></p></li>
+<li id="fn1"><p><a href="https://cran.r-project.org/web/packages/mixtools/index.html" class="uri">https://cran.r-project.org/web/packages/mixtools/index.html</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf" class="uri">https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://exploringdatablog.blogspot.com/2011/08/fitting-mixture-distributions-with-r.html" class="uri">https://exploringdatablog.blogspot.com/2011/08/fitting-mixture-distributions-with-r.html</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="http://tinyheero.github.io/2015/10/13/mixture-model.html" class="uri">http://tinyheero.github.io/2015/10/13/mixture-model.html</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="http://tinyheero.github.io/2016/01/03/gmm-em.html#checking-for-convergence" class="uri">http://tinyheero.github.io/2016/01/03/gmm-em.html#checking-for-convergence</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
 </ol>
 </div>

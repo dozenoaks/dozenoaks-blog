@@ -6,10 +6,19 @@
     <description>Recent content in R on Dozenoaks Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 11 Jun 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Plotting mixture models in ggplot2</title>
+      <link>/2019/06/mixture-models/</link>
+      <pubDate>Tue, 11 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/06/mixture-models/</guid>
+      <description>We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else. A common solution to figuring out what the typical representative values are in the mixed population is to fit multiple gaussians to the data and describe the mean and standard deviation of each.</description>
+    </item>
     
     <item>
       <title>Moving the blog</title>

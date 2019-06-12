@@ -6,13 +6,40 @@
     <description>Recent content in Tags on Dozenoaks Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 11 Jun 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Blogging</title>
+      <title>R</title>
+      <link>/tags/r/</link>
+      <pubDate>Tue, 11 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ggplot2</title>
+      <link>/tags/ggplot2/</link>
+      <pubDate>Tue, 11 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/ggplot2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mixture models</title>
+      <link>/tags/mixture-models/</link>
+      <pubDate>Tue, 11 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/mixture-models/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>blogging</title>
       <link>/tags/blogging/</link>
       <pubDate>Tue, 06 Mar 2018 00:00:00 +0000</pubDate>
       
@@ -21,88 +48,7 @@
     </item>
     
     <item>
-      <title>Dynein</title>
-      <link>/tags/dynein/</link>
-      <pubDate>Mon, 11 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/dynein/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Ggplot2</title>
-      <link>/tags/ggplot2/</link>
-      <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/ggplot2/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Illustration</title>
-      <link>/tags/illustration/</link>
-      <pubDate>Tue, 07 Jan 2014 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/illustration/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Image Analysis</title>
-      <link>/tags/image-analysis/</link>
-      <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/image-analysis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Imagej</title>
-      <link>/tags/imagej/</link>
-      <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/imagej/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Kinesin</title>
-      <link>/tags/kinesin/</link>
-      <pubDate>Mon, 11 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/kinesin/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Kymographs</title>
-      <link>/tags/kymographs/</link>
-      <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/kymographs/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Microscopy</title>
-      <link>/tags/microscopy/</link>
-      <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/microscopy/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Microtubules</title>
-      <link>/tags/microtubules/</link>
-      <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/microtubules/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Publishing</title>
+      <title>publishing</title>
       <link>/tags/publishing/</link>
       <pubDate>Tue, 06 Mar 2018 00:00:00 +0000</pubDate>
       
@@ -111,25 +57,7 @@
     </item>
     
     <item>
-      <title>R</title>
-      <link>/tags/r/</link>
-      <pubDate>Tue, 06 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/r/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Sci Art</title>
-      <link>/tags/sci-art/</link>
-      <pubDate>Tue, 07 Jan 2014 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/sci-art/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Sci Life</title>
+      <title>sci-life</title>
       <link>/tags/sci-life/</link>
       <pubDate>Tue, 06 Mar 2018 00:00:00 +0000</pubDate>
       
@@ -138,11 +66,92 @@
     </item>
     
     <item>
-      <title>Twitter</title>
+      <title>image analysis</title>
+      <link>/tags/image-analysis/</link>
+      <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/image-analysis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kymographs</title>
+      <link>/tags/kymographs/</link>
+      <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/kymographs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dynein</title>
+      <link>/tags/dynein/</link>
+      <pubDate>Mon, 11 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/dynein/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kinesin</title>
+      <link>/tags/kinesin/</link>
+      <pubDate>Mon, 11 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/kinesin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>twitter</title>
       <link>/tags/twitter/</link>
       <pubDate>Tue, 21 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/twitter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ImageJ</title>
+      <link>/tags/imagej/</link>
+      <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/imagej/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>microscopy</title>
+      <link>/tags/microscopy/</link>
+      <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/microscopy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>microtubules</title>
+      <link>/tags/microtubules/</link>
+      <pubDate>Tue, 23 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/microtubules/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>illustration</title>
+      <link>/tags/illustration/</link>
+      <pubDate>Tue, 07 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/illustration/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sci-art</title>
+      <link>/tags/sci-art/</link>
+      <pubDate>Tue, 07 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/sci-art/</guid>
       <description></description>
     </item>
     

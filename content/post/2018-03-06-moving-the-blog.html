@@ -14,12 +14,26 @@ tags:
 
 
 
-<p>I moved my blog! Not just in terms of where it’s hosted, but how the whole thing is built. Previously I’d been using <a href="https://ghost.org/">ghost</a>, which was fine up until the moment I wanted to publish more code/analysis. The process of copy-pasting code and exporting images was taking more time than writing the code itself.</p>
-<p>I’m now using the <code>blogdown</code> package which builds static websites within RStudio using Hugo <em>and</em> lets you publish the results. The key thing being that you can publish an R notebook directly from the console where the analysis is written, while <code>blogdown</code> does all the hard (boring) work. I went for the <a href="https://github.com/">GitHub</a> -&gt; <a href="https://www.netlify.com/">Netlify</a> route to publishing, as recommended by <code>blogdown</code> creator <a href="https://yihui.name/en/about/">Yihui Xie</a>. Given that I have only the vaguest of notions about how all that works, it was surprisingly straight forward to set up thanks to really excellent documentation. I’m currently using the <a href="https://github.com/kakawait/hugo-tranquilpeak-theme">tranquilpeak</a> Hugo theme and using a sub-domain of the lab website to point to Netlify. This also forced me to learn to interact with GitHub more sensibly, which has been on my to do list for about five years - better late than never :)</p>
+<p>I moved my blog! Not just in terms of where it’s hosted, but how the whole thing
+is built. Previously I’d been using <a href="https://ghost.org/">ghost</a>, which was fine up until the moment I wanted to publish more code/analysis. The process of copy-pasting code and exporting images was taking more time than writing the code itself.</p>
+<p>I’m now using the <code>blogdown</code> package which builds static websites within RStudio
+using Hugo <em>and</em> lets you publish the results. The key thing being that you can
+publish an R notebook directly from the console where the analysis is written,
+while <code>blogdown</code> does all the hard (boring) work. I went for the
+<a href="https://github.com/">GitHub</a> -&gt; <a href="https://www.netlify.com/">Netlify</a> route to
+publishing, as recommended by <code>blogdown</code> creator <a href="https://yihui.name/en/about/">Yihui
+Xie</a>. Given that I have only the vaguest of
+notions about how all that works, it was surprisingly straight forward to set up
+thanks to really excellent documentation. I’m currently using the
+<a href="https://github.com/kakawait/hugo-tranquilpeak-theme">tranquilpeak</a> Hugo theme
+and using a sub-domain of the lab website to point to Netlify. This also forced
+me to learn to interact with GitHub more sensibly, which has been on my to do
+list for about five years - better late than never :)</p>
 <p>Handy resources if you’re looking to do the same:</p>
 <ul>
 <li>The blog down book by Yihui Xei et al., <a href="https://bookdown.org/yihui/blogdown/">blogdown: Creating Websites with R Markdown</a><br />
 </li>
 <li>Jenny Bryan’s intro to GitHub book, <a href="http://happygitwithr.com/">Happy Git and GitHub for the useR</a></li>
 </ul>
-<p>The only gotcha I encountered: the automatically generated .Icon file created by OSX in any new folder halted compilation when I initially rendered my website locally. This was easily fixed by deleting the file.</p>
+<p>The only gotcha I encountered: the automatically generated .Icon file created by OSX in any new folder halted compilation when I initially rendered my
+website locally. This was easily fixed by deleting the file.</p>

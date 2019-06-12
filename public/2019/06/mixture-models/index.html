@@ -1,0 +1,938 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.55.6 with theme Tranquilpeak 0.4.3-BETA">
+    <title>Plotting mixture models in ggplot2</title>
+    <meta name="author" content="Ali Twelvetrees">
+    <meta name="keywords" content="">
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+    <meta name="description" content="We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else. A common solution to figuring out what the typical representative values are in the mixed population is to fit multiple gaussians to the data and describe the mean and standard deviation of each.">
+    <meta property="og:description" content="We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else. A common solution to figuring out what the typical representative values are in the mixed population is to fit multiple gaussians to the data and describe the mean and standard deviation of each.">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Plotting mixture models in ggplot2">
+    <meta property="og:url" content="/2019/06/mixture-models/">
+    <meta property="og:site_name" content="Dozenoaks Blog">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Dozenoaks Blog">
+    <meta name="twitter:description" content="We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else. A common solution to figuring out what the typical representative values are in the mixed population is to fit multiple gaussians to the data and describe the mean and standard deviation of each.">
+    
+      <meta name="twitter:creator" content="@dozenaoks">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/8c8109c71dcc98731581515d4d888fd2?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11029994-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">Dozenoaks Blog</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/8c8109c71dcc98731581515d4d888fd2?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Ali Twelvetrees</h4>
+        
+          <h5 class="sidebar-profile-bio">Research scientist looking at kinesin, dynein and neurons; trying to figure out how stuff moves around inside neurons and how it goes wrong in neurodegeneration.</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.twelvetreeslab.co.uk">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-flask"></i>
+      
+      <span class="sidebar-button-desc">Lab Website</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.twelvetreeslab.co.uk">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dozenoaks">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      Plotting mixture models in ggplot2
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2019-06-11T00:00:00Z">
+        
+  June 11, 2019
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="/categories/r">R</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+
+<p>We have a couple of different projects running at the moment that need us to
+think about mixture models - these are common in single molecule biophysics work
+as you frequently end up with two or more populations of molecules stretched out
+along a continuous variable; could be velocity, step size or something else. A
+common solution to figuring out what the typical representative values are in
+the mixed population is to fit multiple gaussians to the data and describe the
+mean and standard deviation of each. Doing this also allows you to describe the
+relative size of each population if this changes with conditions. <a href="https://cran.r-project.org/web/packages/mixtools/index.html">The <code>mixtools</code>
+package</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> for R
+does all this and more - it’s a fantastic resource (and the
+<a href="https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf">vignette</a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+is really well written too).</p>
+<p>There are already some great blog posts<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> <a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> that go into using the
+<code>normalmixEM</code> function to find a specified number (<em>k</em>) of best fit gaussians
+for your data. And also some that do a far better job than this biologist is
+ever going to do of explaining the Expectation-Maximization Algorithm<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> that’s
+at work. It’s worth noting that <code>mixtools</code> has a whole suite of tools for
+estimating the number of guassians in your sample (not trivial) and can deal
+with non-normal distributions. This post deals with something altogether more
+practical - getting ggplot2 to plot multiple guassians with different
+amplitudes. Google failed to provide the answer I was looking for - if you can’t
+find it with Google, it must need a blog post.</p>
+<div id="set-up-and-getting-the-model" class="section level3">
+<h3>set up and getting the model</h3>
+<pre class="r"><code>#libraries needed
+library(tidyverse)
+library(mixtools)</code></pre>
+<p>First let’s simulate a data set comprised of two groups with different means and
+the same standard deviation, but with half the observations in one group
+compared to the other:</p>
+<pre class="r"><code>set.seed(12) #better make this reproducible
+observations &lt;- data_frame(obv = c(
+  rnorm(n = 125, mean = 0.1, sd = 0.2), #the first normal distribution
+  rnorm(n = 250, mean = 0.8, sd = 0.2) #this second distribution is double the size of the first
+  )
+  )</code></pre>
+<pre><code>## Warning: `data_frame()` is deprecated, use `tibble()`.
+## This warning is displayed once per session.</code></pre>
+<pre class="r"><code>#and a quick gander...
+ggplot(observations, aes(x = obv)) + 
+  geom_histogram(binwidth = 0.05) +
+  theme_bw()</code></pre>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/simulate-data-1.png" width="672" /></p>
+<p>Next let’s get <code>mixtools</code> to figure out where it thinks those guassians are:</p>
+<pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 2) #telling it to find to gaussians in the observations</code></pre>
+<pre><code>## number of iterations= 38</code></pre>
+<pre class="r"><code>plot(my_mix, which = 2) #looking at the model produced with base graphics</code></pre>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/find-gaussians-1.png" width="672" /></p>
+</div>
+<div id="the-problem" class="section level3">
+<h3>the problem</h3>
+<p>For publication ready plots we need to move over to ggplot2 rather than base
+graphics (some will argue no doubt, but there’s value in making graphics as
+human friendly as possible for communicating science).
+<code>normalmixEM</code> provides a list of 9 outputs for the guassians it calculates,
+including the mean, standard deviation and amplitude:</p>
+<pre class="r"><code>my_mix[[&quot;mu&quot;]] # means</code></pre>
+<pre><code>## [1] 0.08612553 0.79291123</code></pre>
+<pre class="r"><code>my_mix[[&quot;sigma&quot;]] # standard deviations</code></pre>
+<pre><code>## [1] 0.1638908 0.1950395</code></pre>
+<pre class="r"><code>my_mix[[&quot;lambda&quot;]] # amplitudes</code></pre>
+<pre><code>## [1] 0.3262176 0.6737824</code></pre>
+<p>It’s straight forward enough to use <code>dnorm</code> with <code>stat_function</code> to plot a
+gaussian line on top of a histogram. Two guassians requires two <code>stat_functions</code>
+- not a big deal, but if you’ve got a data set with four or five, or you want to
+insert this more programmatically into an analysis script you quickly hit
+problems.</p>
+<pre class="r"><code>ggplot(observations, aes(x = obv)) + 
+  geom_histogram(binwidth = 0.05) +
+  stat_function(fun = dnorm, 
+                args = list(mean = my_mix[[&quot;mu&quot;]][[1]], sd = my_mix[[&quot;sigma&quot;]][[1]])) +
+  stat_function(fun = dnorm, 
+                args = list(mean = my_mix[[&quot;mu&quot;]][[2]], sd = my_mix[[&quot;sigma&quot;]][[2]])) +
+  theme_bw()</code></pre>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/plot-basic-gaussians-1.png" width="672" /></p>
+<p>There’s another couple of problems immediately. The gaussians are expressed as
+densities and the histogram as counts. Adding the aes <code>y = ..density..</code> to the
+histogram can fix this problem, but only if you want to express the data as a
+density instead of event counts. More difficult, <code>dnorm</code> doesn’t have an
+argument for the relative amplitude, so both gaussians have the same area. Three
+things need fixing - plot all the guassians in a single call, convert them to be
+proportional to counts and incorporate the relative amplitude. Plotting multiple
+instances of a function requires <code>mapply</code> - the above plot can also be made like
+this:</p>
+<pre class="r"><code>ggplot(observations, aes(x = obv)) + 
+  geom_histogram(binwidth = 0.05) +
+  mapply(function(mean, sd) {
+    stat_function(fun = dnorm, args = list(mean = mean, sd = sd))
+    },
+    mean = my_mix[[&quot;mu&quot;]], 
+    sd = my_mix[[&quot;sigma&quot;]]
+  ) +
+  theme_bw()</code></pre>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/use-mapply-1.png" width="672" /></p>
+</div>
+<div id="the-solution" class="section level3">
+<h3>the solution</h3>
+<p>Scaling the gaussian density to the count number requires taking into account
+the number of observations in the data set and the bin width of the histogram.
+If we’re creating a function to modify <code>dnorm</code> then it can also incorporate the
+amplitude, <code>my_mix[[&quot;lambda&quot;]]</code>. I need to nest a new function with extra
+arguments inside <code>stat_function</code> to modify <code>dnorm</code>.</p>
+<pre class="r"><code>ggplot(observations, aes(x = obv)) +
+  geom_histogram(binwidth = 0.05) +
+  mapply(
+    function(mean, sd, lambda, n, binwidth) {
+      stat_function(
+        fun = function(x) {
+          (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
+        }
+      )
+    },
+    mean = my_mix[[&quot;mu&quot;]], #mean
+    sd = my_mix[[&quot;sigma&quot;]], #standard deviation
+    lambda = my_mix[[&quot;lambda&quot;]], #amplitude
+    n = length(observations$obv), #sample size
+    binwidth = 0.05 #binwidth used for histogram
+  ) +
+  theme_bw()</code></pre>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/final-solution-1.png" width="672" /></p>
+<p>That’s more like it! And just to check it works for a more complicated data set
+with more than two distributions:</p>
+<pre class="r"><code>set.seed(12)
+observations &lt;- data_frame(obv = c(
+  rnorm(n = 125, mean = 0.1, sd = 0.2),
+  rnorm(n = 175, mean = 0.4, sd = 0.05),
+  rnorm(n = 250, mean = 0.6, sd = 0.05),
+  rnorm(n = 250, mean = 0.8, sd = 0.2)
+  )
+  )
+
+my_mix &lt;- normalmixEM(observations$obv, k = 4)</code></pre>
+<pre><code>## number of iterations= 736</code></pre>
+<pre class="r"><code>ggplot(observations, aes(x = obv)) + 
+  geom_histogram(binwidth = 0.05) +
+  mapply(function(mean, sd, lambda, n, binwidth) {
+    stat_function(
+      fun = function(x) {
+        (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
+        }
+      )
+    },
+    mean = my_mix[[&quot;mu&quot;]], 
+    sd = my_mix[[&quot;sigma&quot;]],
+    lambda = my_mix[[&quot;lambda&quot;]],
+    n = length(observations$obv),
+    binwidth = 0.05
+  ) +
+  theme_bw()</code></pre>
+<p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/checking-with-more-groups-1.png" width="672" /></p>
+</div>
+<div id="r-session" class="section level3">
+<h3>R session</h3>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## ─ Session info ──────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.0 (2019-04-26)
+##  os       macOS Mojave 10.14          
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_GB.UTF-8                 
+##  ctype    en_GB.UTF-8                 
+##  tz       Europe/London               
+##  date     2019-06-12                  
+## 
+## ─ Packages ──────────────────────────────────────────────────────────────
+##  package     * version  date       lib source        
+##  assertthat    0.2.1    2019-03-21 [1] CRAN (R 3.6.0)
+##  backports     1.1.4    2019-04-10 [1] CRAN (R 3.6.0)
+##  blogdown      0.13     2019-06-11 [1] CRAN (R 3.6.0)
+##  bookdown      0.11     2019-05-28 [1] CRAN (R 3.6.0)
+##  broom         0.5.2    2019-04-07 [1] CRAN (R 3.6.0)
+##  callr         3.2.0    2019-03-15 [1] CRAN (R 3.6.0)
+##  cellranger    1.1.0    2016-07-27 [1] CRAN (R 3.6.0)
+##  cli           1.1.0    2019-03-19 [1] CRAN (R 3.6.0)
+##  colorspace    1.4-1    2019-03-18 [1] CRAN (R 3.6.0)
+##  crayon        1.3.4    2017-09-16 [1] CRAN (R 3.6.0)
+##  desc          1.2.0    2018-05-01 [1] CRAN (R 3.6.0)
+##  devtools      2.0.2    2019-04-08 [1] CRAN (R 3.6.0)
+##  digest        0.6.19   2019-05-20 [1] CRAN (R 3.6.0)
+##  dplyr       * 0.8.1    2019-05-14 [1] CRAN (R 3.6.0)
+##  evaluate      0.14     2019-05-28 [1] CRAN (R 3.6.0)
+##  forcats     * 0.4.0    2019-02-17 [1] CRAN (R 3.6.0)
+##  fs            1.3.1    2019-05-06 [1] CRAN (R 3.6.0)
+##  generics      0.0.2    2018-11-29 [1] CRAN (R 3.6.0)
+##  ggplot2     * 3.1.1    2019-04-07 [1] CRAN (R 3.6.0)
+##  glue          1.3.1    2019-03-12 [1] CRAN (R 3.6.0)
+##  gtable        0.3.0    2019-03-25 [1] CRAN (R 3.6.0)
+##  haven         2.1.0    2019-02-19 [1] CRAN (R 3.6.0)
+##  hms           0.4.2    2018-03-10 [1] CRAN (R 3.6.0)
+##  htmltools     0.3.6    2017-04-28 [1] CRAN (R 3.6.0)
+##  httr          1.4.0    2018-12-11 [1] CRAN (R 3.6.0)
+##  jsonlite      1.6      2018-12-07 [1] CRAN (R 3.6.0)
+##  knitr         1.23     2019-05-18 [1] CRAN (R 3.6.0)
+##  labeling      0.3      2014-08-23 [1] CRAN (R 3.6.0)
+##  lattice       0.20-38  2018-11-04 [1] CRAN (R 3.6.0)
+##  lazyeval      0.2.2    2019-03-15 [1] CRAN (R 3.6.0)
+##  lubridate     1.7.4    2018-04-11 [1] CRAN (R 3.6.0)
+##  magrittr      1.5      2014-11-22 [1] CRAN (R 3.6.0)
+##  MASS          7.3-51.4 2019-03-31 [1] CRAN (R 3.6.0)
+##  Matrix        1.2-17   2019-03-22 [1] CRAN (R 3.6.0)
+##  memoise       1.1.0    2017-04-21 [1] CRAN (R 3.6.0)
+##  mixtools    * 1.1.0    2017-03-10 [1] CRAN (R 3.6.0)
+##  modelr        0.1.4    2019-02-18 [1] CRAN (R 3.6.0)
+##  munsell       0.5.0    2018-06-12 [1] CRAN (R 3.6.0)
+##  nlme          3.1-140  2019-05-12 [1] CRAN (R 3.6.0)
+##  pillar        1.4.1    2019-05-28 [1] CRAN (R 3.6.0)
+##  pkgbuild      1.0.3    2019-03-20 [1] CRAN (R 3.6.0)
+##  pkgconfig     2.0.2    2018-08-16 [1] CRAN (R 3.6.0)
+##  pkgload       1.0.2    2018-10-29 [1] CRAN (R 3.6.0)
+##  plyr          1.8.4    2016-06-08 [1] CRAN (R 3.6.0)
+##  prettyunits   1.0.2    2015-07-13 [1] CRAN (R 3.6.0)
+##  processx      3.3.1    2019-05-08 [1] CRAN (R 3.6.0)
+##  ps            1.3.0    2018-12-21 [1] CRAN (R 3.6.0)
+##  purrr       * 0.3.2    2019-03-15 [1] CRAN (R 3.6.0)
+##  R6            2.4.0    2019-02-14 [1] CRAN (R 3.6.0)
+##  Rcpp          1.0.1    2019-03-17 [1] CRAN (R 3.6.0)
+##  readr       * 1.3.1    2018-12-21 [1] CRAN (R 3.6.0)
+##  readxl        1.3.1    2019-03-13 [1] CRAN (R 3.6.0)
+##  remotes       2.0.4    2019-04-10 [1] CRAN (R 3.6.0)
+##  rlang         0.3.4    2019-04-07 [1] CRAN (R 3.6.0)
+##  rmarkdown     1.13     2019-05-22 [1] CRAN (R 3.6.0)
+##  rprojroot     1.3-2    2018-01-03 [1] CRAN (R 3.6.0)
+##  rstudioapi    0.10     2019-03-19 [1] CRAN (R 3.6.0)
+##  rvest         0.3.4    2019-05-15 [1] CRAN (R 3.6.0)
+##  scales        1.0.0    2018-08-09 [1] CRAN (R 3.6.0)
+##  segmented     0.5-4.0  2019-05-13 [1] CRAN (R 3.6.0)
+##  sessioninfo   1.1.1    2018-11-05 [1] CRAN (R 3.6.0)
+##  stringi       1.4.3    2019-03-12 [1] CRAN (R 3.6.0)
+##  stringr     * 1.4.0    2019-02-10 [1] CRAN (R 3.6.0)
+##  survival      2.44-1.1 2019-04-01 [1] CRAN (R 3.6.0)
+##  tibble      * 2.1.3    2019-06-06 [1] CRAN (R 3.6.0)
+##  tidyr       * 0.8.3    2019-03-01 [1] CRAN (R 3.6.0)
+##  tidyselect    0.2.5    2018-10-11 [1] CRAN (R 3.6.0)
+##  tidyverse   * 1.2.1    2017-11-14 [1] CRAN (R 3.6.0)
+##  usethis       1.5.0    2019-04-07 [1] CRAN (R 3.6.0)
+##  withr         2.1.2    2018-03-15 [1] CRAN (R 3.6.0)
+##  xfun          0.7      2019-05-14 [1] CRAN (R 3.6.0)
+##  xml2          1.2.0    2018-01-24 [1] CRAN (R 3.6.0)
+##  yaml          2.2.0    2018-07-25 [1] CRAN (R 3.6.0)
+## 
+## [1] /Library/Frameworks/R.framework/Versions/3.6/Resources/library</code></pre>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://cran.r-project.org/web/packages/mixtools/index.html" class="uri">https://cran.r-project.org/web/packages/mixtools/index.html</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p><a href="https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf" class="uri">https://cran.r-project.org/web/packages/mixtools/vignettes/mixtools.pdf</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p><a href="https://exploringdatablog.blogspot.com/2011/08/fitting-mixture-distributions-with-r.html" class="uri">https://exploringdatablog.blogspot.com/2011/08/fitting-mixture-distributions-with-r.html</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p><a href="http://tinyheero.github.io/2015/10/13/mixture-model.html" class="uri">http://tinyheero.github.io/2015/10/13/mixture-model.html</a><a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><a href="http://tinyheero.github.io/2016/01/03/gmm-em.html#checking-for-convergence" class="uri">http://tinyheero.github.io/2016/01/03/gmm-em.html#checking-for-convergence</a><a href="#fnref5" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/ggplot2/">ggplot2</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/r/">R</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/mixture-models/">mixture models</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/moving-the-blog/" data-tooltip="Moving the blog">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=/2019/06/mixture-models/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=/2019/06/mixture-models/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=/2019/06/mixture-models/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 Ali Twelvetrees. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/03/moving-the-blog/" data-tooltip="Moving the blog">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=/2019/06/mixture-models/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=/2019/06/mixture-models/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=/2019/06/mixture-models/">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=%2F2019%2F06%2Fmixture-models%2F">
+          <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=%2F2019%2F06%2Fmixture-models%2F">
+          <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=%2F2019%2F06%2Fmixture-models%2F">
+          <i class="fa fa-google-plus"></i><span>Share on Google&#43;</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/8c8109c71dcc98731581515d4d888fd2?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Ali Twelvetrees</h4>
+    
+      <div id="about-card-bio">Research scientist looking at kinesin, dynein and neurons; trying to figure out how stuff moves around inside neurons and how it goes wrong in neurodegeneration.</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Vice Chancellor&rsquo;s Fellow
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Sheffield
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2019/06/mixture-models/">
+                <h3 class="media-heading">Plotting mixture models in ggplot2</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">We have a couple of different projects running at the moment that need us to think about mixture models - these are common in single molecule biophysics work as you frequently end up with two or more populations of molecules stretched out along a continuous variable; could be velocity, step size or something else. A common solution to figuring out what the typical representative values are in the mixed population is to fit multiple gaussians to the data and describe the mean and standard deviation of each.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2018/03/moving-the-blog/">
+                <h3 class="media-heading">Moving the blog</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">I moved my blog! Not just in terms of where it’s hosted, but how the whole thing is built. Previously I’d been using ghost, which was fine up until the moment I wanted to publish more code/analysis. The process of copy-pasting code and exporting images was taking more time than writing the code itself.
+I’m now using the blogdown package which builds static websites within RStudio using Hugo and lets you publish the results.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2018/02/turning-a-kymograph-into-tidy-data-using-the-tidyverse-in-r/">
+                <h3 class="media-heading">Turning a kymograph into tidy data using the tidyverse in R</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">I have a bit of a love hate relationship with kymographs. In the way that they compress data there’s no doubt that you loose information, but in the world of axonal transport and low signal:noise they have clear advantages in enabling quantification.
+I covered before a couple of strategies you can use to import image data into R. The next step in my workflow is usually to turn that image into a data table for further analysis.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2017/12/kinesin-nomenclature/">
+                <h3 class="media-heading">Kinesin nomenclature</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2017
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Andreas Prokop raised the issue of kinesin nomenclature on twitter over the weekend “I am tired of having to look up lists!”. I couldn’t agree more, it’s insanely confusing - especially when you’re trying to synthesise literature across several model organisms (shout out to Ustilago maydis and Dictyostelium discoideum here). Why is it confusing? The standardised kinesin nomenclature was defined in 2004, where the superfamily was divided into sub families.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2017/11/sci-twitter-like-a-pro/">
+                <h3 class="media-heading">Sci twitter like a ‘pro&#39;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2017
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">I asked the scientists of twitter what platform they were using to interact with twitter itself (&lsquo;for a thing&rsquo;).</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2016/09/importing-images-into-r/">
+                <h3 class="media-heading">Importing images into R</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2016
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">In May my paper was finally released into the wild. Amongst other things it was the culmination of 4 years of me learning to use R for data analysis (and in my case data = images of cells). I’ve been meaning to blog some of this for a while, but I will try for my own sanity to keep everything in bite size chunks. Starting at the start: data import.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2015/06/the-pregnant-new-mum-guide-to-science-conferences/">
+                <h3 class="media-heading">The pregnant/new mum guide to science conferences</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2015
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Pregnancy and new motherhood has brought a whole swathe of new experiences to my conference outings. This is my definitive guide to science conferences for the expecting/new Mum to help you decide where to expend your energy&hellip;.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2014/12/merry-christmas/">
+                <h3 class="media-heading">Merry Christmas!</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2014
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">When I was on the microscope imaging EB3 comets in axons as a control experiment for a control experiment, I got distracted by the comets in the dendrites - so pretty! They reminded me of the icicle lights on the outside of people&rsquo;s houses you see this time of year. So this is my science Christmas card to you - have a Merry one :)</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="/2014/01/drawing-microtubules/">
+                <h3 class="media-heading">Drawing microtubules</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2014
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Sometime ago I got recruited by Jake to help him come up with a summary figure for his paper on <a href="http://www.plosbiology.org/article/info:doi/10.1371/journal.pbio.1001611">p150 and microtubule catastrophe</a>. I place high scientific value on well designed descriptive schematics that help you visualise and explain the process your trying to describe, so I took the task on and decided to use it as an opportunity to build myself a decent microtubule model for later use.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         9 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('/images/header.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+    
+  </body>
+</html>
+
