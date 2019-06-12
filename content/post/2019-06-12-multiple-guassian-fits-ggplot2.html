@@ -37,23 +37,32 @@ amplitudes. Google failed to provide the answer I was looking for - if you can�
 find it with Google, it must need a blog post.</p>
 <div id="set-up-and-getting-the-model" class="section level3">
 <h3>set up and getting the model</h3>
-<pre class="r"><code>#libraries needed
+<pre class="r"><code>#&#39; libraries needed
 library(tidyverse)
-library(mixtools)</code></pre>
+library(mixtools)
+
+ggplot2::theme_set(
+  theme_bw() +
+    theme(
+      plot.title = element_text(size = 14),
+      axis.title = element_text(size = 14, colour = &quot;grey30&quot;),
+      axis.text = element_text(size = 12, colour = &quot;grey30&quot;),
+      panel.grid = element_blank()
+    )
+)</code></pre>
 <p>First let’s simulate a data set comprised of two groups with different means and
 the same standard deviation, but with half the observations in one group
 compared to the other:</p>
-<pre class="r"><code>set.seed(12) # better make this reproducible
+<pre class="r"><code>set.seed(12) #better make this reproducible
 observations &lt;- tibble(obv = c(
-  rnorm(n = 125, mean = 0.1, sd = 0.2), # the first normal distribution
-  rnorm(n = 250, mean = 0.8, sd = 0.2) # this second distribution is double the size of the first
+  rnorm(n = 125, mean = 0.1, sd = 0.2), #the first normal distribution
+  rnorm(n = 250, mean = 0.8, sd = 0.2) #this second distribution is double the size of the first
   )
   )
 
-# and a quick gander...
+#and a quick gander...
 ggplot(observations, aes(x = obv)) + 
-  geom_histogram(binwidth = 0.05) +
-  theme_bw()</code></pre>
+  geom_histogram(binwidth = 0.05)</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/simulate-data-1.png" width="672" /></p>
 <p>Next let’s get <code>mixtools</code> to figure out where it thinks those guassians are:</p>
 <pre class="r"><code>my_mix &lt;- normalmixEM(observations$obv, k = 2) # telling it to find two gaussians in the observations</code></pre>
@@ -84,8 +93,7 @@ problems.</p>
   stat_function(fun = dnorm, 
                 args = list(mean = my_mix[[&quot;mu&quot;]][[1]], sd = my_mix[[&quot;sigma&quot;]][[1]])) +
   stat_function(fun = dnorm, 
-                args = list(mean = my_mix[[&quot;mu&quot;]][[2]], sd = my_mix[[&quot;sigma&quot;]][[2]])) +
-  theme_bw()</code></pre>
+                args = list(mean = my_mix[[&quot;mu&quot;]][[2]], sd = my_mix[[&quot;sigma&quot;]][[2]]))</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/plot-basic-gaussians-1.png" width="672" /></p>
 <p>There’s another couple of problems immediately. The gaussians are expressed as
 densities and the histogram as counts. Adding the aes <code>y = ..density..</code> to the
@@ -103,8 +111,7 @@ this:</p>
     },
     mean = my_mix[[&quot;mu&quot;]], 
     sd = my_mix[[&quot;sigma&quot;]]
-  ) +
-  theme_bw()</code></pre>
+  )</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/use-mapply-1.png" width="672" /></p>
 </div>
 <div id="the-solution" class="section level3">
@@ -129,8 +136,7 @@ arguments inside <code>stat_function</code> to modify <code>dnorm</code>.</p>
     lambda = my_mix[[&quot;lambda&quot;]], #amplitude
     n = length(observations$obv), #sample size
     binwidth = 0.05 #binwidth used for histogram
-  ) +
-  theme_bw()</code></pre>
+  )</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/final-solution-1.png" width="672" /></p>
 <p>That’s more like it! And just to check it works for a more complicated data set
 with more than two distributions:</p>
@@ -160,8 +166,7 @@ observations &lt;- data_frame(obv = c(
     lambda = my_mix[[&quot;lambda&quot;]],
     n = length(observations$obv),
     binwidth = 0.05
-  ) +
-  theme_bw()</code></pre>
+  )</code></pre>
 <p><img src="/post/2019-06-12-multiple-guassian-fits-ggplot2_files/figure-html/checking-with-more-groups-1.png" width="672" /></p>
 </div>
 <div id="r-session" class="section level3">

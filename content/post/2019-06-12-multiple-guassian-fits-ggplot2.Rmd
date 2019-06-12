@@ -48,9 +48,19 @@ find it with Google, it must need a blog post.
 ### set up and getting the model
 
 ```{r libraries, message=FALSE, warning=FALSE, paged.print=FALSE}
-#libraries needed
+#' libraries needed
 library(tidyverse)
 library(mixtools)
+
+ggplot2::theme_set(
+  theme_bw() +
+    theme(
+      plot.title = element_text(size = 14),
+      axis.title = element_text(size = 14, colour = "grey30"),
+      axis.text = element_text(size = 12, colour = "grey30"),
+      panel.grid = element_blank()
+    )
+)
 ```
 
 First let's simulate a data set comprised of two groups with different means and
@@ -59,17 +69,16 @@ compared to the other:
 
 
 ```{r simulate-data}
-set.seed(12) # better make this reproducible
+set.seed(12) #better make this reproducible
 observations <- tibble(obv = c(
-  rnorm(n = 125, mean = 0.1, sd = 0.2), # the first normal distribution
-  rnorm(n = 250, mean = 0.8, sd = 0.2) # this second distribution is double the size of the first
+  rnorm(n = 125, mean = 0.1, sd = 0.2), #the first normal distribution
+  rnorm(n = 250, mean = 0.8, sd = 0.2) #this second distribution is double the size of the first
   )
   )
 
-# and a quick gander...
+#and a quick gander...
 ggplot(observations, aes(x = obv)) + 
-  geom_histogram(binwidth = 0.05) +
-  theme_bw()
+  geom_histogram(binwidth = 0.05)
 ```
 
 Next let's get `mixtools` to figure out where it thinks those guassians are:
@@ -104,8 +113,7 @@ ggplot(observations, aes(x = obv)) +
   stat_function(fun = dnorm, 
                 args = list(mean = my_mix[["mu"]][[1]], sd = my_mix[["sigma"]][[1]])) +
   stat_function(fun = dnorm, 
-                args = list(mean = my_mix[["mu"]][[2]], sd = my_mix[["sigma"]][[2]])) +
-  theme_bw()
+                args = list(mean = my_mix[["mu"]][[2]], sd = my_mix[["sigma"]][[2]]))
 ```
 
 There's another couple of problems immediately. The gaussians are expressed as
@@ -125,8 +133,7 @@ ggplot(observations, aes(x = obv)) +
     },
     mean = my_mix[["mu"]], 
     sd = my_mix[["sigma"]]
-  ) +
-  theme_bw()
+  )
 ```
 
 ### the solution
@@ -152,8 +159,7 @@ ggplot(observations, aes(x = obv)) +
     lambda = my_mix[["lambda"]], #amplitude
     n = length(observations$obv), #sample size
     binwidth = 0.05 #binwidth used for histogram
-  ) +
-  theme_bw()
+  )
 ```
           
 That's more like it! And just to check it works for a more complicated data set
@@ -184,8 +190,7 @@ ggplot(observations, aes(x = obv)) +
     lambda = my_mix[["lambda"]],
     n = length(observations$obv),
     binwidth = 0.05
-  ) +
-  theme_bw()
+  )
 ```
 
 ### R session
