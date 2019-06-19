@@ -1,0 +1,350 @@
+---
+title: 'Plotting mixture models, part 2: sum of gaussians'
+thumbnailImagePosition: left
+thumbnailImage: /post/2019-06-19-plotting-mixture-models-part-2-sum-of-gaussians_files/figure-html/final-solution-1.png
+author: Ali Twelvetrees
+date: '2019-06-19'
+slug: sum-of-gaussians
+categories:
+  - R
+tags:
+  - R
+  - ggplot2
+  - mixture models
+---
+
+In the previous post I plotted multiple fit gaussians onto a data set with
+ggplot2 - the final model is actually the sum of these fitted gaussians though,
+so how do I plot that? This is a  more tricksy problem. I know I need to nest
+the `mapply` function inside another function, but my mind doesn't immediately
+leap to the answer - I tried to come up with something quickly, but it
+inevitably failed.
+
+My approach to fixing analysis problems like this is to break it down and build
+up the complexity slowly until I get something that works. Rather than working
+over the same code until it was right, this time I kept track of my iterations
+so I had something I could use to demonstrate my approach to my students.
+
+**An aside on why I think it's important:** I really want to create an
+environment in my lab where folks are comfortable with coding (so far it's
+working!); I share [Steve Royle's
+view](https://quantixed.org/2019/06/13/coming-soon-the-digital-cell/) that
+"[computer-based methods] have now permeated mainstream […] cell biology to such
+an extent that any groups that want to do cell biology in the future have to
+adapt". We're wet lab scientists, and almost all my students coming in don't
+have huge experience in analyzing data with a programming language. I didn't
+learn R until I self-taught as a postdoc. One of the things that made it
+difficult to learn was when you did figure out an answer with Google and stack
+overflow, it was usually just presented to you - "Ta da! I'm smart look at my
+solution!". This gives the impression that if you know R/python/whatever you
+should just know the answer - but really getting things to work requires the
+same sort of focus and optimizing of a protocol as bench work. You can do it in
+a structured way, and with more experience you get better,
+just like bench work. For me, part of fostering the right environment to
+encourage people to pick up R and python and be comfortable not always getting
+is right, is to show how I work through some problems.
+
+### where we left off
+
+I kick off where I left off, plotting the gaussians on a simulated data set
+
+```{r set-up, message=FALSE, warning=FALSE, paged.print=FALSE, fig.asp=0.618}
+#libraries needed
+library(tidyverse)
+library(mixtools)
+library(ghibli) #' if I want to look less professional by having 
+                #' studio ghibli themed plots on my blog that's my choice, okay?
+
+#just a plotting theme
+ggplot2::theme_set(
+  theme_bw() +
+    theme(
+      plot.background = element_rect(fill = ghibli_palettes$PonyoLight[7]),
+      panel.background = element_rect(fill = ghibli_palettes$PonyoLight[7]),
+      plot.title = element_text(size = 14),
+      axis.title = element_text(size = 14, colour = ghibli_palettes$PonyoDark[7]),
+      axis.text = element_text(size = 12, colour = ghibli_palettes$PonyoDark[7]),
+      panel.grid = element_blank()
+    )
+)
+
+#simulate a dataset
+set.seed(12) #better make this reproducible
+observations <- tibble(value = c(
+  rnorm(n = 1000, mean = 0.1, sd = 0.1),
+  rnorm(n = 4000, mean = 0.5, sd = 0.4),
+  rnorm(n = 3000, mean = 0.9, sd = 0.1)
+  )
+  )
+
+#model the dataset with multiple gaussians
+my_mix <- normalmixEM(observations$value, k = 3)
+
+#plot the data and the model
+ggplot(observations, aes(x = value)) + 
+  geom_histogram(binwidth = 0.05, fill = ghibli_palettes$PonyoMedium[2]) +
+  mapply(function(mean, sd, lambda, n, binwidth, colour) {
+    stat_function(
+      fun = function(x) {
+        (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
+        },
+      colour = colour, #this is just to make it pretty
+      size = 1
+      ) 
+    },
+    mean = my_mix[["mu"]], 
+    sd = my_mix[["sigma"]],
+    lambda = my_mix[["lambda"]],
+    n = length(observations$value),
+    binwidth = 0.05,
+    colour = c(ghibli_palettes$PonyoMedium[3], 
+               ghibli_palettes$PonyoMedium[4], 
+               ghibli_palettes$PonyoMedium[5])
+  )
+```
+
+### where do I start?
+**[warning - this really does go at a snails pace, skip to the end if you want the finished function]**
+
+Define the problem. I know what I want to do - at each point along x I want to
+sum the individual guassians together to get the final model. I take this pretty
+literally and start there. To make my life simpler while I focus on the problem,
+I move out of plotting in `ggplot` for the time being and focus on the numbers.
+The first thing I do is make the `dnorm` modification inside `mapply` into a
+stand alone function so I can call it more easily. 
+
+```{r proportional_gauss, fig.asp=0.618, message=FALSE, warning=FALSE, paged.print=FALSE}
+#my function
+proportional_gauss <- function(x, mean, sd, lambda, n, binwidth) {
+        (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
+        }
+```
+
+
+```{r defining-x, message=FALSE, warning=FALSE, paged.print=FALSE, fig.asp=0.618}
+#some x values
+x_values <- seq(from = -1, to = 2, length.out = 1000)
+```
+
+I'll make a new vector which should be the y values at any given x value for the
+first gaussian function from my model and then check it quickly:
+
+```{r first-model, fig.asp=0.618}
+model_1 <- proportional_gauss(
+  x = x_values,
+  mean = my_mix[["mu"]][[1]],
+  sd = my_mix[["sigma"]][[1]],
+  lambda = my_mix[["lambda"]][[1]],
+  n = length(observations$value),
+  binwidth = 0.05
+)
+
+plot(model_1)
+```
+
+Great - that worked. I'll make the other two then assemble them all into one
+table (`tibble`). With dplyr I'll add a column with `mutate` to have the sum of
+all the models, then quickly check if this give me the data I'm after.
+
+```{r other-models, fig.asp=0.618}
+model_2 <- proportional_gauss(
+  x = x_values,
+  mean = my_mix[["mu"]][[2]],
+  sd = my_mix[["sigma"]][[2]],
+  lambda = my_mix[["lambda"]][[2]],
+  n = length(observations$value),
+  binwidth = 0.05
+)
+
+model_3 <- proportional_gauss(
+  x = x_values,
+  mean = my_mix[["mu"]][[3]],
+  sd = my_mix[["sigma"]][[3]],
+  lambda = my_mix[["lambda"]][[3]],
+  n = length(observations$value),
+  binwidth = 0.05
+)
+
+all_models <- tibble(x_values = x_values,
+                     first = model_1,
+                     second = model_2,
+                     third = model_3) %>%
+  mutate(., sum = sum(first, second, third))
+
+plot(all_models$sum) #checking the product of the data
+```
+Eeeer nope... definitely not what I was hoping for. Using the `sum` function like this
+has literally just summed the whole lot together, rather than at each x point.
+Try again...
+
+```{r replace-sum-function, fig.asp=0.618}
+#this time I'll manually add the columns together
+
+all_models <- tibble(
+  x_values = x_values, 
+  first = model_1, 
+  second = model_2, 
+  third = model_3) %>% 
+  mutate(., sum = (first + second + third))
+
+plot(all_models$sum) #checking the product of the data
+```
+
+Okay - Better. Seems relatively simple. But I don't want to manually call
+each model, I want to have a function call all the relevant models at once. I
+Google a bit and then read the `apply` help file for the thousandth time and try this:
+
+```{r try-apply, fig.asp=0.618}
+test_sum <- apply(all_models[, 2:4], 1, sum) #row sums using apply across the 2nd to fourth columns
+plot(test_sum)
+```
+
+Sweet! that totally worked. Okay, now do it in the table - 
+
+```{r use-apply-in-tibble, fig.asp=0.618}
+#replacing the manual sum with the apply function
+all_models <- tibble(
+  x_values = x_values,
+  first = model_1,
+  second = model_2,
+  third = model_3) %>%
+  mutate(., sum = apply(all_models[, 2:4], 1, sum)) 
+
+plot(all_models$sum)
+```
+
+Get in! okay, next task - change the absolute references to columns, `all_models[, 2:4]`, to relative ones with `ncol()`:
+
+```{r make-apply-generic, fig.asp=0.618}
+#making the apply function in mutate generic
+all_models <- tibble(
+  x_values = x_values,
+  first = model_1,
+  second = model_2,
+  third = model_3) %>%
+  mutate(., sum = apply(.[, 2:ncol(.)], 1, sum))
+
+plot(all_models$sum)
+
+#It still works, and overlaying this manual data on the histrogram confirms it:
+ggplot(observations, aes(x = value)) +
+  geom_histogram(binwidth = 0.05, aes(y = ..count..), 
+                 fill = ghibli_palettes$PonyoMedium[2]) +
+  geom_line(data = all_models, aes(x = x_values, y = sum), 
+            colour = ghibli_palettes$PonyoMedium[5], size = 1)
+```
+
+Is it possible to nest the whole function inside ggplot or is that asking for
+trouble? I can only try. First I'll nest my `proportional_gauss` function inside
+`mapply` pretty much the same as I did before when I was plotting.
+
+```{r mapply-and-my-function, fig.asp=0.618}
+#this should do the same thing as before...
+test <- mapply(
+  proportional_gauss, 
+  x = x_values, 
+  MoreArgs = list(
+    mean = my_mix[["mu"]],
+    sd = my_mix[["sigma"]],
+    lambda = my_mix[["lambda"]],
+    n = length(observations$value),
+    binwidth = 0.05
+    )
+  )
+```
+
+When I use the function on the vector `x_values`, I can see the product `test`
+becomes a matrix in my environment. The model data is along the row instead of down the
+column. You can see this by using the row selector, `[row_number,
+column_number]`, to plot the data:
+
+```{r looking-at-the-matrix, fig.asp=0.618}
+#we've got a matrix, so the data is along the row instead of down the column
+plot(test[1,])
+```
+
+So now I need to check that `apply` will still work and change the `MARGIN` command from 1 to 2:
+
+```{r trying-apply-again, fig.asp=0.618}
+test2 <- apply(test, 2, sum) #which means using apply with MARGIN set to 2 not 1 to sum across the guassians
+plot(test2)
+
+#And putting it all together...
+test3 <- apply(mapply(proportional_gauss,
+    x = x_values,
+    MoreArgs = list(
+      mean = my_mix[["mu"]],
+      sd = my_mix[["sigma"]],
+      lambda = my_mix[["lambda"]],
+      n = length(observations$value),
+      binwidth = 0.05
+      )
+    ),
+  2, sum
+  )
+#I guess I should plot this one too, just to be sure...
+
+plot(test3)
+```
+
+Amazeballs! Happy with that. Okay, one last step; nest the `proportional_gauss()`
+function inside a new `proportional_gauss_sum()` function, so I can use that inside
+`stat_function()`. I'll test it outside `ggplot` first:
+
+```{r proportional-gauss-sum, fig.asp=0.618}
+proportional_gauss_sum <- function(x, mean, sd, lambda, n, binwidth) {
+  apply(mapply(proportional_gauss,
+                      x = x,
+                      MoreArgs = list( mean, sd, lambda, n, binwidth)
+                      ), 
+               2, sum)
+}
+
+test4 <- proportional_gauss_sum(
+  x = x_values,
+  mean = my_mix[["mu"]],
+  sd = my_mix[["sigma"]],
+  lambda = my_mix[["lambda"]],
+  n = length(observations$value),
+  binwidth = 0.05
+)
+
+plot(test4)
+```
+
+Okay - that means I'm ready for the final reveal. **Ta da!**
+
+```{r final-solution, fig.asp=0.618}
+proportional_gauss <- function(x, mean, sd, lambda, n, binwidth) {
+        (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
+}
+
+
+proportional_gauss_sum <- function(x, mean, sd, lambda, n, binwidth) {
+  apply(mapply(proportional_gauss,
+               x = x,
+               MoreArgs = list( mean, sd, lambda, n, binwidth)
+               ), 
+        2, sum)
+}
+
+ggplot(observations, aes(x = value)) +
+  geom_histogram(binwidth = 0.05, fill = ghibli_palettes$PonyoMedium[2]) +
+  stat_function(
+    fun = proportional_gauss_sum,
+    args = list(
+      mean = my_mix[["mu"]],
+      sd = my_mix[["sigma"]],
+      lambda = my_mix[["lambda"]],
+      n = length(observations$value),
+      binwidth = 0.05
+    ),
+    colour = ghibli_palettes$PonyoMedium[5], size = 1
+  )
+```
+
+### R session
+
+```{r session-info}
+devtools::session_info()
+```

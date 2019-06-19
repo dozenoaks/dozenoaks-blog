@@ -6,10 +6,19 @@
     <description>Recent content on Dozenoaks Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 11 Jun 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 19 Jun 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Plotting mixture models, part 2: sum of gaussians</title>
+      <link>/2019/06/sum-of-gaussians/</link>
+      <pubDate>Wed, 19 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/06/sum-of-gaussians/</guid>
+      <description>In the previous post I plotted multiple fit gaussians onto a data set with ggplot2 - the final model is actually the sum of these fitted gaussians though, so how do I plot that? This is a more tricksy problem. I know I need to nest the mapply function inside another function, but my mind doesn’t immediately leap to the answer - I tried to come up with something quickly, but it inevitably failed.</description>
+    </item>
     
     <item>
       <title>Plotting mixture models in ggplot2</title>

@@ -11,6 +11,10 @@ tags:
   - ggplot2
   - R
   - mixture models
+output: 
+  html_document: 
+    fig_height: 4
+    fig_width: 6
 ---
 
 This post deals with something niche but
