@@ -341,7 +341,7 @@ stand alone function so I can call it more easily.</p>
 proportional_gauss &lt;- function(x, mean, sd, lambda, n, binwidth) {
         (dnorm(x, mean = mean, sd = sd)) * n * binwidth * lambda
         }</code></pre>
-<pre class="r"><code>#some x values
+<pre class="r"><code>#generate a vector of x values to work with
 x_values &lt;- seq(from = -1, to = 2, length.out = 1000)</code></pre>
 <p>I’ll make a new vector which should be the y values at any given x value for the
 first gaussian function from my model and then check it quickly:</p>

@@ -123,7 +123,7 @@ proportional_gauss <- function(x, mean, sd, lambda, n, binwidth) {
 
 
 ```{r defining-x, message=FALSE, warning=FALSE, paged.print=FALSE, fig.asp=0.618}
-#some x values
+#generate a vector of x values to work with
 x_values <- seq(from = -1, to = 2, length.out = 1000)
 ```
 
