@@ -527,6 +527,17 @@ ggplot(observations, aes(x = value)) +
   )</code></pre>
 <p><img src="/post/2019-06-19-plotting-mixture-models-part-2-sum-of-gaussians_files/figure-html/final-solution-1.png" width="672" /></p>
 </div>
+<div id="a-few-comments-on-the-process" class="section level3">
+<h3>a few comments on the process</h3>
+<p>Just as there’s more than one way to do a western blot, there’s more than one
+way to work through a bump in analysis. Putting all the models into a
+table/tibble in the begining was a bit of a wrong turn - it didn’t really help
+get to the solution. I ended up there because I use dplyr a lot and it’s where
+I’m comfortable. I do tend to plot a lot though, for me it’s the easiest way to
+get a sense of the shape of the data and whether I’m on the right track. I’m
+happy to make lot’s of incremental changes when I’m less familiar with
+the functions I’m using - it’s easier to keep a handle on what’s going on.</p>
+</div>
 <div id="r-session" class="section level3">
 <h3>R session</h3>
 <pre class="r"><code>devtools::session_info()</code></pre>
